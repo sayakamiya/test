@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GOG — 店舗選択</title>
+<style>
+  body {
+    margin: 0;
+    padding: 40px 20px;
+    background: #0c1022; /* 深い紺 */
+    color: #e7d7a8;      /* 柔らかい金 */
+    font-family: "Noto Sans JP", system-ui, sans-serif;
+    text-align: center;
+  }
+
+  .logo {
+    width: 180px;
+    margin: 0 auto 20px auto;
+    display: block;
+  }
+
+  h1 {
+    font-size: 24px;
+    margin-top: 10px;
+    color: #e7d7a8;
+    letter-spacing: 1px;
+  }
+
+  .subtitle {
+    font-size: 14px;
+    color: #d4c59f;
+    margin-bottom: 40px;
+  }
+
+  .store-list {
+    max-width: 420px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .store-btn {
+    background: linear-gradient(180deg, #e8d6a5, #c7a862);
+    border: none;
+    padding: 18px;
+    font-size: 18px;
+    border-radius: 10px;
+    font-weight: 700;
+    color: #3a2e1a;
+    letter-spacing: 1px;
+    cursor: pointer;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.4);
+    transition: 0.2s;
+  }
+
+  .store-btn:hover {
+    filter: brightness(1.1);
+    transform: translateY(-2px);
+  }
+
+  .store-btn:active {
+    transform: translateY(1px);
+  }
+
+  footer {
+    margin-top: 60px;
+    font-size: 12px;
+    opacity: 0.7;
+  }
+</style>
+</head>
+
+<body>
+
+  <!-- ロゴ -->
+  <img src="logo.png" class="logo" alt="GOG Logo">
+
+  <h1>Gold Owing Group</h1>
+  <div class="subtitle">Bar105 • CLUB210 • LOUNGE315</div>
+
+  <div class="store-list">
+    <button class="store-btn" onclick="openStore('bar105')">Bar105</button>
+    <button class="store-btn" onclick="openStore('club210')">CLUB210</button>
+    <button class="store-btn" onclick="openStore('lounge315')">LOUNGE315</button>
+  </div>
+
+  <footer>© Gold Owing Group</footer>
+
+<script>
+function openStore(store){
+  // multi_store_order.html を別タブで開く
+  const url = "multi_store_order.html?store=" + store;
+  window.open(url, "_blank");
+}
+</script>
+
+</body>
+</html>
