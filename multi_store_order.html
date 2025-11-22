@@ -1,0 +1,637 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>🍸 GOG — オーダー計算ツール（スマホ/PC対応）</title>
+<style>
+  :root{
+    --gold:#c9a227;
+    --muted:#d9cfc6;
+    --bg-wood-1:#1b1410;
+    --bg-wood-2:#3a2b24;
+    --card-wood:#2a201b;
+    --accent-dark:#201814;
+    --gap:12px;
+    --btn-size-desktop:40px;
+    --btn-size-mobile:54px;
+    --radius:10px;
+    --danger:#b94a4a;
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    margin:0;
+    padding:18px;
+    font-family:"Noto Sans JP",system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
+    background:linear-gradient(180deg,var(--bg-wood-1),var(--bg-wood-2));
+    color:var(--muted);
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    -webkit-user-select:none;
+  }
+
+  .container{max-width:1200px; margin:0 auto;}
+  header{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:14px;}
+  .title-wrap{display:flex; flex-direction:column;}
+  h1{margin:0; color:var(--gold); font-size:18px;}
+  .subtitle{font-size:13px; color:#bfb3a8;}
+
+  .top-controls{display:flex; gap:8px; align-items:center; flex-wrap:wrap;}
+  .btn {background:#3a2b24; color:var(--muted); border:1px solid #4d3d2d; border-radius:8px; padding:8px 10px; cursor:pointer; font-size:14px;}
+  .btn:hover{background:#4a3a2e; color:var(--gold);}
+  .small {padding:6px 8px; font-size:13px;}
+  .muted{color:#bfb3a8; font-size:13px;}
+
+  .menu-area {display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+  @media(max-width:900px){ .menu-area{grid-template-columns:1fr;} }
+
+  .menu-group {background:var(--card-wood); padding:12px; border-radius:var(--radius); box-shadow:0 6px 18px rgba(0,0,0,0.35);}
+  .menu-group-header{display:flex; justify-content:space-between; gap:8px; align-items:center; margin-bottom:10px;}
+  .menu-group h2{margin:0; font-size:16px; color:var(--gold); display:flex; gap:8px; align-items:center;}
+
+  .menu-item {
+    background:var(--accent-dark);
+    border:1px solid #3c2f27;
+    border-radius:8px;
+    padding:10px;
+    margin-bottom:12px;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+  }
+  .title-row{display:flex; justify-content:space-between; align-items:center; gap:8px;}
+  .name{font-weight:700; font-size:15px;}
+  .price{min-width:90px; text-align:right; white-space:nowrap;}
+  .controls-row{display:flex; gap:8px; align-items:center; justify-content:space-between; flex-wrap:wrap;}
+
+  .btn-row {display:flex; gap:8px; align-items:center; flex-wrap:wrap;}
+  .btn-group-row {display:flex; gap:8px; align-items:center;}
+  .qty-btn {
+    width:var(--btn-size-desktop);
+    height:var(--btn-size-desktop);
+    display:inline-grid; place-items:center;
+    border-radius:8px;
+    background:#3a2b24; color:var(--muted);
+    border:1px solid #4d3d2d; cursor:pointer; font-weight:700;
+    touch-action: manipulation; -webkit-tap-highlight-color: rgba(0,0,0,0);
+  }
+  .qty-btn:hover{background:#4a3a2e; color:var(--gold);}
+  .qty {display:inline-block; min-width:52px; text-align:center; font-weight:800; font-size:16px;}
+
+  .summary {
+    margin-top:18px;
+    background:var(--card-wood);
+    border-radius:var(--radius);
+    padding:14px;
+    box-shadow:0 6px 18px rgba(0,0,0,0.25);
+  }
+  .order-line{display:flex; justify-content:space-between; margin-bottom:8px; font-size:15px;}
+  .total{font-size:20px; text-align:right; color:#fff; margin-top:8px;}
+  .control{margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;}
+  .control .btn{flex:1}
+
+  .editable {background:rgba(255,255,255,0.02); padding:6px; border-radius:6px;}
+  .input-inline {background:transparent; border:1px dashed rgba(255,255,255,0.06); color:var(--muted); padding:4px 6px; border-radius:4px; min-width:60px;}
+
+  .delete-btn {background:transparent; border:1px solid rgba(255,255,255,0.06); color:var(--muted); padding:6px 8px; border-radius:6px; cursor:pointer;}
+  .delete-btn:hover{background:rgba(185,74,74,0.08); color:var(--danger); border-color:var(--danger);}
+
+  .sort-btn {background:transparent; border:1px dashed rgba(255,255,255,0.04); color:var(--muted); padding:6px 8px; border-radius:6px; cursor:pointer;}
+  .sort-btn:hover{color:var(--gold); border-color:var(--gold);}
+
+  body.modern {
+    background:linear-gradient(180deg,#0f1112,#151619);
+    color:#eee;
+  }
+  body.modern .menu-group {background:#141416;}
+  body.modern .menu-item {background:#0e0f10; border-color:#252627;}
+  body.modern .btn {background:#1a1b1c; border-color:#333;}
+  body.modern .btn:hover{color:#fff;}
+  body.modern h1{color:#ffffff;}
+  body.modern .menu-group h2{color:#ffffff;}
+  body.modern .qty-btn{background:#1b1c1d; border-color:#333;}
+
+  @media (max-width:600px) {
+    body{padding:12px;}
+    header{flex-direction:column; align-items:flex-start; gap:8px;}
+    h1{font-size:17px;}
+    .top-controls{width:100%; display:flex; gap:8px; flex-wrap:wrap;}
+    .menu-area{grid-template-columns:1fr;}
+    .menu-group{padding:10px;}
+    .menu-item{padding:12px;}
+    .title-row{flex-direction:row;}
+    .price{min-width:72px; font-size:14px;}
+
+    .btn-row {display:block; width:100%;}
+    .btn-group-row {display:flex; gap:8px; width:100%;}
+    .qty-btn {
+      width:100%;
+      height:var(--btn-size-mobile);
+      border-radius:8px;
+      font-size:16px;
+      display:inline-flex;
+      justify-content:center;
+      align-items:center;
+      -webkit-user-select:none; user-select:none;
+      touch-action: manipulation;
+    }
+    .qty {display:block; text-align:center; font-size:18px; margin:6px 0; font-weight:800;}
+    .menu-item .controls-row {display:flex; gap:8px; justify-content:space-between; align-items:center; flex-direction:column;}
+    .delete-btn{padding:8px 10px;}
+    .group-actions{gap:6px;}
+  }
+
+  .device-indicator {
+    position:fixed; bottom:10px; right:10px;
+    background:rgba(0,0,0,0.45);
+    padding:6px 10px; border-radius:8px;
+    font-size:12px; color:var(--muted); z-index:9999;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div class="title-wrap">
+      <h1>🍸 GOG — オーダー計算ツール（スマホ/PC対応）</h1>
+      <div class="subtitle">店舗は URL パラメータで切替： <code>?store=bar105</code> など</div>
+    </div>
+
+    <div class="top-controls">
+      <button class="btn small" id="toggle-edit">編集 OFF</button>
+      <button class="btn small" id="theme-switch">🎨 テーマ</button>
+      <button class="btn small" id="switch-device">📱⇆💻 切替</button>
+      <button class="btn small" id="copy-store-link">店舗URLをコピー</button>
+      <button class="btn small" id="add-item-btn">＋メニュー追加</button>
+      <button class="btn small" id="reset-default">初期化</button>
+    </div>
+  </header>
+
+  <div class="menu-area">
+    <div class="menu-group" data-group="food">
+      <div class="menu-group-header">
+        <h2>🍽 食べ物</h2>
+        <div class="group-actions">
+          <button class="sort-btn" id="sort-food">¥安い順</button>
+        </div>
+      </div>
+      <div id="group-food"></div>
+    </div>
+
+    <div class="menu-group" data-group="drink">
+      <div class="menu-group-header">
+        <h2>🍹 飲み物</h2>
+        <div class="group-actions">
+          <button class="sort-btn" id="sort-drink">¥安い順</button>
+        </div>
+      </div>
+      <div id="group-drink"></div>
+    </div>
+  </div>
+
+  <div class="summary">
+    <h2>🧾 注文内容</h2>
+    <div id="order-list"></div>
+    <div class="total" id="total-price">¥0</div>
+    <div class="control">
+      <button class="btn" id="copy-order">内容をコピー</button>
+      <button class="btn" id="copy-total">合計をコピー</button>
+      <button class="btn" id="reset-order">リセット</button>
+    </div>
+    <div class="muted" style="margin-top:10px;">
+      ※ メニューの編集・追加・削除はブラウザに保存されます（店舗ごとに分離）。<br>
+      ※ スタッフは店舗専用の URL（?store=...）を共有してください。
+    </div>
+  </div>
+</div>
+
+<!-- add dialog -->
+<div id="add-dialog" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.55); backdrop-filter:blur(3px); align-items:center; justify-content:center; z-index:999;">
+  <div style="background:rgba(30,25,20,0.95); padding:18px; border-radius:12px; width:320px; color:var(--muted); box-shadow:0 8px 22px rgba(0,0,0,0.45);">
+    <h3 style="margin-top:0; color:var(--gold);">メニュー追加</h3>
+    <div style="display:flex; flex-direction:column; gap:10px;">
+      <label>グループ
+        <select id="new-group"><option value="food">🍽 食べ物</option><option value="drink">🍹 飲み物</option></select>
+      </label>
+      <label>名前
+        <input id="new-name" type="text" placeholder="例: 新メニュー">
+      </label>
+      <label>価格（円）
+        <input id="new-price" type="number" min="0" value="1000">
+      </label>
+      <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:8px;">
+        <button class="btn" id="add-confirm">追加</button>
+        <button class="btn" id="add-cancel">キャンセル</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- delete dialog -->
+<div id="delete-dialog" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.55); backdrop-filter:blur(3px); align-items:center; justify-content:center; z-index:999;">
+  <div style="background:rgba(35,20,20,0.95); padding:18px; border-radius:12px; width:300px; color:var(--muted); box-shadow:0 8px 22px rgba(0,0,0,0.45);">
+    <h3 style="margin-top:0; color:var(--danger);">削除確認</h3>
+    <div id="delete-target-name" style="margin-bottom:12px; font-size:15px;"></div>
+    <div style="display:flex; gap:10px; justify-content:flex-end;">
+      <button class="btn" id="delete-confirm" style="background:#712e2e; border-color:#8a3b3b; color:#fff;">削除する</button>
+      <button class="btn" id="delete-cancel">キャンセル</button>
+    </div>
+  </div>
+</div>
+
+<div class="device-indicator" id="device-mode-bar">現在モード: <span id="device-mode-text">auto</span></div>
+
+<script>
+/* ================== マルチ店舗版 — 設定 ================== */
+const STORE_PARAM_KEY = "store";
+const THEME_KEY = "gog_theme_v1";
+const DEVICE_KEY = "gog_device_v1"; // auto / mobile / pc
+const STORAGE_PREFIX = "gog_menus_"; // + store
+
+/* ========== 店舗ごとのメニュー定義（あなたのデータ） ========== */
+const STORE_MENUS = {
+  "bar105": {
+    name: "Bar105",
+    food: [
+      {id:"food_ajillo", name:"アヒージョ（腹50％）", price:10000},
+      {id:"food_apple", name:"りんごとシナモンのスティック（腹40％）", price:6000},
+      {id:"food_caprese", name:"カプレーゼ（腹35％）", price:4500},
+      {id:"food_ham", name:"生ハム（腹35％）", price:4500},
+      {id:"food_nuts", name:"ミックスナッツ（腹20％）", price:3000}
+    ],
+    drink: [
+      {id:"drink_tequila", name:"テキーラサンライズ（水分50％）", price:15000},
+      {id:"drink_martini", name:"マティーニ（水分50％）", price:15000},
+      {id:"drink_manhattan", name:"マンハッタン（水分50％）", price:15000},
+      {id:"drink_mojito", name:"モヒート（水分40％）", price:7000},
+      {id:"drink_whisky", name:"ウィスキー(ロック)（水分40％）", price:7000},
+      {id:"drink_gintonic", name:"ジントニック（水分35％）", price:5500},
+      {id:"drink_kahlua", name:"カルーアミルク（水分35％）", price:5500},
+      {id:"drink_fuzzy", name:"ファジーネーブル（水分35％）", price:5500},
+      {id:"drink_craftbeer", name:"クラフトビール（水分20％）", price:4000},
+      {id:"drink_limited", name:"期間限定ドリンク", price:30000}
+    ]
+  },
+
+  "club210": {
+    name: "CLUB210",
+    food: [
+      {id:"c_food_dryfruit", name:"ドライフルーツ（腹50％）", price:18000},
+      {id:"c_food_olive", name:"オリーブ（腹40％）", price:12600},
+      {id:"c_food_choco", name:"生チョコ（腹35％）", price:9000}
+    ],
+    drink: [
+      {id:"c_drink_champagne", name:"シャンパン（水分50％）", price:21000},
+      {id:"c_drink_tequila", name:"テキーラ（水分40％）", price:12600},
+      {id:"c_drink_beer", name:"ビール（水分35％）", price:9000}
+    ]
+  },
+
+  "lounge315": {
+    name: "LOUNGE315",
+    food: [
+      {id:"l_food_doria", name:"パプリカのドリア（腹50％）", price:21000},
+      {id:"l_food_canape", name:"カナッペ（ピンチョス）（腹35％）", price:10500}
+    ],
+    drink: [
+      {id:"l_drink_champagne", name:"シャンパン（水分50％）", price:21000},
+      {id:"l_drink_sparkling", name:"スパークリングワイン（水分40％）", price:14700},
+      {id:"l_drink_brandy", name:"ブランデー（水分40％）", price:14700},
+      {id:"l_drink_wine", name:"ワイン（水分35％）", price:10500}
+    ]
+  }
+};
+
+/* ========== 実行時に現在の店舗を決定 ========== */
+function getStoreFromUrl(){
+  const params = new URLSearchParams(location.search);
+  const s = (params.get(STORE_PARAM_KEY) || "bar105").toLowerCase();
+  return STORE_MENUS[s] ? s : "bar105";
+}
+let CURRENT_STORE = getStoreFromUrl();
+
+/* メニュー変数（店舗ごと） */
+function loadStoreMenus(storeKey){
+  const key = STORAGE_PREFIX + storeKey;
+  try{
+    const raw = localStorage.getItem(key);
+    if(raw) return JSON.parse(raw);
+  }catch(e){}
+  // デフォルトをコピーして保存
+  const base = STORE_MENUS[storeKey];
+  const merged = [...(base.food||[]), ...(base.drink||[])].map(x=>Object.assign({}, x));
+  localStorage.setItem(key, JSON.stringify(merged));
+  return JSON.parse(JSON.stringify(merged));
+}
+function saveStoreMenus(storeKey, arr){
+  localStorage.setItem(STORAGE_PREFIX + storeKey, JSON.stringify(arr));
+}
+
+/* global state */
+let menus = loadStoreMenus(CURRENT_STORE); // array of {id,name,price,group inferred}
+let order = {}; // {id: qty}
+let editMode = false;
+let deleteTarget = null;
+
+/* helper: split menus into groups when rendering */
+function getMenusByGroup(arr){
+  const food = arr.filter(m=>m.id && (m.id.includes("food")||m.id.includes("food_") || m.group==="food" || !m.id.startsWith("drink")));
+  const drink = arr.filter(m=>m.id && (m.id.includes("drink")||m.id.includes("drink_") || m.group==="drink" || !m.id.startsWith("food")));
+  // ensure group property
+  food.forEach(m=>m.group="food");
+  drink.forEach(m=>m.group="drink");
+  return {food, drink};
+}
+
+/* ================= theme/device apply ================= */
+function applyTheme(){
+  const t = localStorage.getItem(THEME_KEY) || "classic";
+  document.body.classList.toggle("modern", t==="modern");
+  document.getElementById("theme-switch").textContent = t==="modern" ? "🎨 Modern" : "🎨 Bar";
+}
+function toggleTheme(){
+  const cur = localStorage.getItem(THEME_KEY) || "classic";
+  localStorage.setItem(THEME_KEY, cur==="classic" ? "modern" : "classic");
+  applyTheme();
+}
+
+function getDevicePreference(){ return localStorage.getItem(DEVICE_KEY) || "auto"; }
+function applyDeviceMode(){
+  const mode = getDevicePreference();
+  const el = document.getElementById("device-mode-text");
+  el.textContent = mode;
+  document.body.classList.remove("force-mobile","force-pc");
+  if(mode==="mobile") document.body.classList.add("force-mobile");
+  if(mode==="pc") document.body.classList.add("force-pc");
+}
+function toggleDeviceMode(){
+  const cur = getDevicePreference();
+  const next = cur==="auto" ? "mobile" : (cur==="mobile" ? "pc" : "auto");
+  localStorage.setItem(DEVICE_KEY, next);
+  applyDeviceMode();
+}
+
+/* ========== render menus ========== */
+function renderMenus(){
+  // menus is flat array — but store info exists in STORE_MENUS for structure; we'll infer group from id/name
+  // ensure group props
+  const storeDef = STORE_MENUS[CURRENT_STORE];
+  // Build arrays from storeDef reference when possible to keep order; otherwise use menus
+  const foodList = menus.filter(m => (m.id.includes("food") || (storeDef.food.some(x=>x.id===m.id))));
+  const drinkList = menus.filter(m => (m.id.includes("drink") || (storeDef.drink.some(x=>x.id===m.id))));
+  // fallback: classify by price or manual
+  const composed = getMenusByGroup(menus);
+
+  const foodEl = document.getElementById("group-food");
+  const drinkEl = document.getElementById("group-drink");
+  foodEl.innerHTML = "";
+  drinkEl.innerHTML = "";
+
+  const {food, drink} = composed;
+
+  food.forEach(it => {
+    const card = buildMenuCard(it);
+    foodEl.appendChild(card);
+  });
+  drink.forEach(it => {
+    const card = buildMenuCard(it);
+    drinkEl.appendChild(card);
+  });
+}
+
+/* build one menu card DOM */
+function buildMenuCard(it){
+  const card = document.createElement("div");
+  card.className = "menu-item";
+  card.dataset.id = it.id;
+  card.dataset.name = it.name;
+  card.dataset.price = it.price;
+  card.dataset.group = it.group || (it.id && it.id.startsWith("l_") ? "food" : (it.id && it.id.startsWith("drink") ? "drink" : ""));
+
+  let title = document.createElement("div");
+  title.className = "title-row";
+  const nameEl = document.createElement("span");
+  nameEl.className = "name";
+  nameEl.textContent = it.name;
+  if(editMode) nameEl.contentEditable = "true";
+
+  const priceEl = document.createElement("span");
+  priceEl.className = "price";
+  priceEl.textContent = "¥" + it.price.toLocaleString();
+  if(editMode) priceEl.contentEditable = "true";
+
+  title.appendChild(nameEl);
+  title.appendChild(priceEl);
+
+  const controls = document.createElement("div");
+  controls.className = "controls-row";
+
+  const btnRow = document.createElement("div");
+  btnRow.className = "btn-row";
+
+  const plusGroup = document.createElement("div");
+  plusGroup.className = "btn-group-row";
+  ["1","5","10","50"].forEach(n=>{
+    const b = document.createElement("button");
+    b.className = "qty-btn";
+    b.textContent = "+" + n;
+    b.addEventListener("click", ()=> updateOrderById(it.id, parseInt(n)));
+    plusGroup.appendChild(b);
+  });
+
+  const qty = document.createElement("span");
+  qty.className = "qty";
+  qty.id = "qty-" + it.id;
+  qty.textContent = order[it.id] || 0;
+
+  const minusGroup = document.createElement("div");
+  minusGroup.className = "btn-group-row";
+  ["1","5","10","50"].forEach(n=>{
+    const b = document.createElement("button");
+    b.className = "qty-btn";
+    b.textContent = "-" + n;
+    b.addEventListener("click", ()=> updateOrderById(it.id, -parseInt(n)));
+    minusGroup.appendChild(b);
+  });
+
+  btnRow.appendChild(plusGroup);
+  btnRow.appendChild(qty);
+  btnRow.appendChild(minusGroup);
+
+  controls.appendChild(btnRow);
+
+  if(editMode){
+    const del = document.createElement("button");
+    del.className = "delete-btn";
+    del.textContent = "削除";
+    del.addEventListener("click", ()=> requestDelete(it.id, it.name));
+    controls.appendChild(del);
+
+    // attach blur handlers for editable fields after a short delay
+    setTimeout(()=>{
+      nameEl.addEventListener("blur", ()=>{
+        const newName = nameEl.textContent.trim();
+        const m = menus.find(x=>x.id===it.id);
+        if(m){ m.name = newName; saveCurrentMenus(); renderMenus(); renderOrderList(); }
+      });
+      priceEl.addEventListener("blur", ()=>{
+        const raw = priceEl.textContent.replace(/[^\d]/g,"");
+        const newPrice = parseInt(raw) || 0;
+        const m = menus.find(x=>x.id===it.id);
+        if(m){ m.price = newPrice; saveCurrentMenus(); renderMenus(); renderOrderList(); }
+      });
+    },50);
+  }
+
+  card.appendChild(title);
+  card.appendChild(controls);
+  return card;
+}
+
+/* ========== order operations ========== */
+function updateOrderById(id, delta){
+  if(!order[id]) order[id]=0;
+  order[id] += delta;
+  if(order[id] < 0) order[id] = 0;
+  const el = document.getElementById("qty-" + id);
+  if(el) el.textContent = order[id];
+  renderOrderList();
+}
+
+function renderOrderList(){
+  const box = document.getElementById("order-list");
+  box.innerHTML = "";
+  let total = 0;
+  // iterate menus in displayed order
+  menus.forEach(it=>{
+    const q = order[it.id] || 0;
+    if(q <= 0) return;
+    const line = document.createElement("div");
+    line.className = "order-line";
+    line.innerHTML = `<span>${it.name} × ${q}</span><span>¥${(it.price * q).toLocaleString()}</span>`;
+    box.appendChild(line);
+    total += it.price * q;
+  });
+  document.getElementById("total-price").textContent = "¥" + total.toLocaleString();
+}
+
+/* ========== edit/delete/add/save ========= */
+function toggleEdit(){
+  editMode = !editMode;
+  document.getElementById("toggle-edit").textContent = editMode ? "編集 ON" : "編集 OFF";
+  renderMenus();
+}
+
+function requestDelete(id, name){
+  deleteTarget = id;
+  document.getElementById("delete-target-name").textContent = `${name} を削除しますか？`;
+  document.getElementById("delete-dialog").style.display = "flex";
+}
+function confirmDelete(){
+  if(!deleteTarget) return;
+  menus = menus.filter(m=>m.id !== deleteTarget);
+  saveCurrentMenus();
+  delete order[deleteTarget];
+  renderMenus();
+  renderOrderList();
+  closeDeleteDialog();
+}
+function closeDeleteDialog(){ deleteTarget = null; document.getElementById("delete-dialog").style.display = "none"; }
+
+function openAddDialog(){ document.getElementById("add-dialog").style.display = "flex"; }
+function closeAddDialog(){ document.getElementById("add-dialog").style.display = "none"; document.getElementById("new-name").value=""; document.getElementById("new-price").value="1000"; }
+
+function addNewItem(){
+  const name = document.getElementById("new-name").value.trim();
+  const price = parseInt(document.getElementById("new-price").value);
+  const group = document.getElementById("new-group").value;
+  if(!name){ alert("名前を入力してください"); return; }
+  const id = CURRENT_STORE + "_custom_" + Math.random().toString(36).slice(2,9);
+  const item = {id, name, price: isNaN(price)?0:price, group};
+  menus.push(item);
+  saveCurrentMenus();
+  closeAddDialog();
+  renderMenus();
+}
+
+/* ========== save/load menus for current store ========== */
+function saveCurrentMenus(){ saveStoreMenus(CURRENT_STORE, menus); }
+function loadCurrentMenus(){ menus = loadStoreMenus(CURRENT_STORE); }
+
+/* ========== sorting per group (ascending price) ========== */
+function sortGroup(group){
+  // stable sort within group and keep other group order after
+  const groupItems = menus.filter(m=> (m.group||inferGroup(m.id))===group ).sort((a,b)=>a.price - b.price);
+  const other = menus.filter(m=> (m.group||inferGroup(m.id))!==group);
+  menus = groupItems.concat(other);
+  saveCurrentMenus();
+  renderMenus();
+}
+function inferGroup(id){
+  return id && id.includes("drink") ? "drink" : "food";
+}
+
+/* ========== utilities ========== */
+function copyToClipboard(text){
+  return navigator.clipboard && navigator.clipboard.writeText ? navigator.clipboard.writeText(text) : (function(){ prompt("コピー:", text); return Promise.resolve(); })();
+}
+
+function copyStoreUrl(){
+  const url = location.origin + location.pathname + "?store=" + CURRENT_STORE;
+  copyToClipboard(url).then(()=> alert("店舗URLをコピーしました:\n" + url));
+}
+
+/* ========== reset/clear ========== */
+function resetOrder(){
+  order = {};
+  renderMenus(); renderOrderList();
+}
+function resetStoreDefaults(){
+  if(!confirm("この店舗のメニューを最初の定義に戻しますか？（ブラウザ内のデータが置き換わります）")) return;
+  // rebuild from STORE_MENUS[CURRENT_STORE]
+  const base = STORE_MENUS[CURRENT_STORE];
+  const arr = [...(base.food||[]).map(x=>Object.assign({},x)), ...(base.drink||[]).map(x=>Object.assign({},x))];
+  menus = arr;
+  saveCurrentMenus();
+  resetOrder();
+  renderMenus();
+  renderOrderList();
+}
+
+/* ========== init / event handlers ========== */
+document.getElementById("toggle-edit").addEventListener("click", toggleEdit);
+document.getElementById("theme-switch").addEventListener("click", toggleTheme);
+document.getElementById("switch-device").addEventListener("click", toggleDeviceMode);
+document.getElementById("copy-store-link").addEventListener("click", copyStoreUrl);
+document.getElementById("add-item-btn").addEventListener("click", openAddDialog);
+document.getElementById("add-confirm").addEventListener("click", addNewItem);
+document.getElementById("add-cancel").addEventListener("click", closeAddDialog);
+document.getElementById("delete-confirm").addEventListener("click", confirmDelete);
+document.getElementById("delete-cancel").addEventListener("click", closeDeleteDialog);
+document.getElementById("sort-food").addEventListener("click", ()=> sortGroup("food"));
+document.getElementById("sort-drink").addEventListener("click", ()=> sortGroup("drink"));
+document.getElementById("reset-default").addEventListener("click", resetStoreDefaults);
+document.getElementById("copy-order").addEventListener("click", ()=>{
+  let text = "";
+  menus.forEach(m=>{ const q = order[m.id] || 0; if(q>0) text += `${m.name} × ${q}\n`; });
+  copyToClipboard(text || "(空)").then(()=> alert("注文内容をコピーしました"));
+});
+document.getElementById("copy-total").addEventListener("click", ()=> { copyToClipboard(document.getElementById("total-price").textContent).then(()=> alert("合計をコピーしました")); });
+document.getElementById("reset-order").addEventListener("click", resetOrder);
+
+/* apply initial state */
+applyTheme();
+applyDeviceMode();
+loadCurrentMenus();
+renderMenus();
+renderOrderList();
+
+/* expose store name in title/subtitle */
+(function setStoreLabel(){
+  const label = STORE_MENUS[CURRENT_STORE].name || CURRENT_STORE;
+  document.querySelector(".subtitle").textContent = `店舗: ${label} （GOG） — URL: ?store=${CURRENT_STORE}`;
+})();
+</script>
+</body>
+</html>
