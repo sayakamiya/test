@@ -606,7 +606,18 @@ document.getElementById("deviceToggleBtn").onclick = () => {
 
   applyDeviceMode();
 };
+<script>
+// ===== フッター側のリセットボタンを確実に動かす =====
+window.addEventListener("DOMContentLoaded", () => {
+  const footerResetBtn = document.getElementById("footerResetBtn");
+  const clearAll = document.getElementById("clearAllBtn");
 
+  if (footerResetBtn && clearAll) {
+    footerResetBtn.addEventListener("click", () => {
+      clearAll.click();   // ← 上側のリセットを確実に発火させる
+    });
+  }
+});
 </script>
 
 
