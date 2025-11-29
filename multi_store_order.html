@@ -230,6 +230,16 @@
     bottom: 80px;
   }
 
+
+body {
+  padding-bottom: 140px !important;
+}
+@media (max-width: 600px) {
+  body {
+    padding-bottom: 170px !important;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -608,6 +618,17 @@ document.getElementById("deviceToggleBtn").onclick = () => {
 
   applyDeviceMode();
 };
+
+
+// ---- フッターリセットを確実に動作させる ----
+window.addEventListener("DOMContentLoaded", () => {
+  const footerResetBtn = document.getElementById("footerResetBtn");
+  if (footerResetBtn) {
+    footerResetBtn.addEventListener("click", () => {
+      resetAll();
+    });
+  }
+});
 
 </script>
 
