@@ -565,19 +565,16 @@ document.getElementById("deleteConfirm").onclick = () => {
 
 // ==========================
 // 全リセット
-// ==========================
-
-    renderMenus();
-  }
-};
+function resetAll(){
+  Object.keys(qtyMap).forEach(k=>qtyMap[k]=0);
+  renderMenus();
+}
 
 
 // フッター側リセットボタン（ヘッダーと同じ動き）
 const footerResetBtn = document.getElementById("footerResetBtn");
 if (footerResetBtn) {
-  footerResetBtn.onclick = () => {
-    
-  };
+  footerResetBtn.onclick = () => { resetAll(); };
 }
 
 // ==========================
