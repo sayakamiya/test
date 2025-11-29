@@ -246,7 +246,7 @@
 
     <div class="top-controls">
       <button class="btn small" id="editModeBtn">編集モード</button>
-      <button class="btn small" id="clearAllBtn">全リセット</button>
+      
       <button class="btn small" id="deviceToggleBtn">PC/スマホ切替</button>
     </div>
   </header>
@@ -290,6 +290,13 @@
 </div>
 
 <script>
+
+// --- Unified reset function (footer only) ---
+function resetAll() {
+  Object.keys(qtyMap).forEach(k => qtyMap[k] = 0);
+  renderMenus();
+}
+
 // ==========================
 //  店舗データ
 // ==========================
@@ -559,9 +566,7 @@ document.getElementById("deleteConfirm").onclick = () => {
 // ==========================
 // 全リセット
 // ==========================
-document.getElementById("clearAllBtn").onclick = () => {
-  if (confirm("数量を全てリセットしますか？")) {
-    Object.keys(qtyMap).forEach(k => qtyMap[k] = 0);
+
     renderMenus();
   }
 };
@@ -571,7 +576,7 @@ document.getElementById("clearAllBtn").onclick = () => {
 const footerResetBtn = document.getElementById("footerResetBtn");
 if (footerResetBtn) {
   footerResetBtn.onclick = () => {
-    document.getElementById("clearAllBtn").click();
+    
   };
 }
 
@@ -606,18 +611,7 @@ document.getElementById("deviceToggleBtn").onclick = () => {
 
   applyDeviceMode();
 };
-<script>
-// ===== フッター側のリセットボタンを確実に動かす =====
-window.addEventListener("DOMContentLoaded", () => {
-  const footerResetBtn = document.getElementById("footerResetBtn");
-  const clearAll = document.getElementById("clearAllBtn");
 
-  if (footerResetBtn && clearAll) {
-    footerResetBtn.addEventListener("click", () => {
-      clearAll.click();   // ← 上側のリセットを確実に発火させる
-    });
-  }
-});
 </script>
 
 
