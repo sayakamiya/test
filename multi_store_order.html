@@ -114,6 +114,8 @@
     border:1px solid rgba(255,255,255,0.03);
     cursor:pointer;
     font-weight:800;
+  
+    touch-action: manipulation;
   }
   .qty-btn:hover{filter:brightness(1.08); color:var(--gold);}
 
@@ -164,50 +166,69 @@
 }
 
 
-/* 食べ物・飲み物見出し（デザインB） */
-.menu-group-header h2 {
-  width: 100%;
-  font-size: 22px;
-  font-weight: 900;
-  color: var(--gold);
-  margin: 0;
-  padding: 10px 0 4px 0;
-  border-bottom: 3px solid rgba(201,162,39,0.55);
-  letter-spacing: 1px;
-}
+  /* --- 食べ物 / 飲み物ラベル：薄い金色背景で強調 --- */
+  .menu-group-header{
+    background: rgba(201,162,39,0.12);
+    padding: 10px 14px;
+    border-radius: 10px;
+    margin-bottom: 14px;
+    border: 1px solid rgba(201,162,39,0.25);
+    box-shadow: 0 0 10px rgba(0,0,0,0.35);
+  }
+  .menu-group-header h2{
+    margin: 0;
+    font-size: 20px;
+    font-weight: 900;
+    color: var(--gold);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
 
+  /* --- ゴールド追尾フッター（コンテナ幅にフィット） --- */
+  .total-bar{
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    z-index: 9998;
+  }
+  .total-bar-inner{
+    width: 100%;
+    max-width: 1200px;
+    background: linear-gradient(180deg,#c9a227,#9f821d);
+    padding: 12px 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 2px solid rgba(255,255,255,0.3);
+    box-shadow: 0 -4px 18px rgba(0,0,0,0.6);
+  }
+  .total-text{
+    font-size: 22px;
+    font-weight: 900;
+    color: #fff;
+    text-shadow: 0 0 6px rgba(0,0,0,0.45);
+  }
+  .reset-btn-footer{
+    background: rgba(0,0,0,0.25);
+    color: #fff;
+    padding: 10px 18px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.45);
+    font-size: 14px;
+    cursor: pointer;
+  }
+  .reset-btn-footer:hover{
+    background: rgba(0,0,0,0.4);
+  }
 
-/* ゴールド系 追尾フッター */
-.total-bar {
-  position: fixed;
-  left: 0; bottom: 0;
-  width: 100%;
-  background: linear-gradient(180deg, #c9a227, #9f821d);
-  padding: 14px 18px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  z-index: 9999;
-  border-top: 2px solid rgba(255,255,255,0.2);
-}
-.total-bar .total-text {
-  font-size: 24px;
-  font-weight: 900;
-  color: #fff;
-  text-shadow: 0 0 6px rgba(0,0,0,0.5);
-}
-.total-bar .reset-btn {
-  background: rgba(0,0,0,0.2);
-  color: #fff;
-  padding: 10px 18px;
-  font-size: 15px;
-  border-radius: 10px;
-  border: 1px solid rgba(255,255,255,0.4);
-}
-.total-bar .reset-btn:hover {
-  background: rgba(0,0,0,0.35);
-}
-.device-indicator { bottom: 90px !important; }
+  /* デバイス表示ラベルがフッターと重ならないように調整 */
+  .device-indicator{
+    bottom: 80px;
+  }
 
 </style>
 </head>
@@ -441,10 +462,10 @@ renderMenus();
 // ==========================
 // 合計
 // ==========================
-
 function renderSummary() {
   let total = 0;
-  let html2 = "";
+  let html = "";
+
   Object.keys(qtyMap).forEach(id => {
     const q = qtyMap[id];
     if (q > 0) {
@@ -452,19 +473,23 @@ function renderSummary() {
       const item = currentStore.menus[group][index];
       const sub = item.price * q;
       total += sub;
-      html2 += `<div class="order-line"><span>${item.name} x ${q}</span><span>¥${sub.toLocaleString()}</span></div>`;
-    }
-  });
-  document.getElementById("summary").innerHTML =
-    html2 + `<div class="total">合計：¥${total.toLocaleString()}</div>`;
-  document.getElementById("totalAmount").textContent =
-    `合計：¥${total.toLocaleString()}`;
-}
 
+      html += `
+        <div class="order-line">
+          <span>${item.name} x ${q}</span>
+          <span>¥${sub.toLocaleString()}</span>
+        </div>
+      `;
+    }
   });
 
   document.getElementById("summary").innerHTML =
     html + `<div class="total">合計：¥${total.toLocaleString()}</div>`;
+
+  const footerTotal = document.getElementById("totalAmountFooter");
+  if (footerTotal) {
+    footerTotal.textContent = `合計：¥${total.toLocaleString()}`;
+  }
 }
 
 // ==========================
@@ -534,14 +559,21 @@ document.getElementById("deleteConfirm").onclick = () => {
 // ==========================
 // 全リセット
 // ==========================
-document.getElementById("resetBtn2").onclick=function(){ if(confirm('数量を全てリセットしますか？')){Object.keys(qtyMap).forEach(k=>qtyMap[k]=0);renderMenus();}};
-
 document.getElementById("clearAllBtn").onclick = () => {
   if (confirm("数量を全てリセットしますか？")) {
     Object.keys(qtyMap).forEach(k => qtyMap[k] = 0);
     renderMenus();
   }
 };
+
+
+// フッター側リセットボタン（ヘッダーと同じ動き）
+const footerResetBtn = document.getElementById("footerResetBtn");
+if (footerResetBtn) {
+  footerResetBtn.onclick = () => {
+    document.getElementById("clearAllBtn").click();
+  };
+}
 
 // ==========================
 // デバイス切替
@@ -578,10 +610,13 @@ document.getElementById("deviceToggleBtn").onclick = () => {
 </script>
 
 
-<div id="totalBar" class="total-bar">
-  <div id="totalAmount" class="total-text">合計：¥0</div>
-  <button class="reset-btn" id="resetBtn2">リセット</button>
+<div class="total-bar">
+  <div class="total-bar-inner">
+    <div id="totalAmountFooter" class="total-text">合計：¥0</div>
+    <button id="footerResetBtn" class="reset-btn-footer">リセット</button>
+  </div>
 </div>
+
 
 </body>
 </html>
