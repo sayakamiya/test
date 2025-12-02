@@ -30,6 +30,15 @@
     background: linear-gradient(180deg, var(--navy), #071028);
     color:var(--muted);
     -webkit-font-smoothing:antialiased;
+    display:flex;
+    flex-direction:column;
+  }
+
+  main{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    width:100%;
   }
 
   .container{max-width:1200px; margin:0 auto;}
@@ -39,7 +48,7 @@
     align-items:center;
     justify-content:space-between;
     gap:12px;
-    margin-bottom: 260px;
+    margin-bottom:18px;
   }
 
   .title-wrap{display:flex; flex-direction:column;}
@@ -73,14 +82,33 @@
     border:1px solid rgba(255,255,255,0.02);
   }
 
-  .menu-group-header{display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom: 260px;}
-  .menu-group h2{margin:0; font-size:16px; color:var(--gold); display:flex; align-items:center; gap:8px;}
+  /* --- 食べ物 / 飲み物ラベル（薄い金背景） --- */
+  .menu-group-header{
+    background: rgba(201,162,39,0.12);
+    padding: 10px 14px;
+    border-radius: 10px;
+    margin-bottom: 14px;
+    border: 1px solid rgba(201,162,39,0.25);
+    box-shadow: 0 0 10px rgba(0,0,0,0.35);
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+  }
+  .menu-group-header h2{
+    margin: 0;
+    font-size: 20px;
+    font-weight: 900;
+    color: var(--gold);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
 
   .menu-item{
     background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.03));
     border-radius:10px;
     padding:12px;
-    margin-bottom: 260px;
+    margin-bottom:14px;
     border:1px solid rgba(255,255,255,0.02);
     display:flex;
     flex-direction:column;
@@ -114,7 +142,6 @@
     border:1px solid rgba(255,255,255,0.03);
     cursor:pointer;
     font-weight:800;
-  
     touch-action: manipulation;
   }
   .qty-btn:hover{filter:brightness(1.08); color:var(--gold);}
@@ -128,15 +155,10 @@
     padding:14px;
     box-shadow: 0 8px 24px rgba(0,0,0,0.35);
     border:1px solid rgba(255,255,255,0.02);
-  
-    margin-bottom: 260px;
   }
 
-  .order-line{display:flex; justify-content:space-between; margin-bottom: 260px; font-size:15px; color:#efe9d6;}
+  .order-line{display:flex; justify-content:space-between; margin-bottom:8px; font-size:15px; color:#efe9d6;}
   .total{font-size:20px; text-align:right; color:#fff; margin-top:8px;}
-
-  .control{margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;}
-  .control .btn{flex:1;}
 
   .delete-btn{background:transparent; border:1px solid rgba(255,255,255,0.04); color:var(--muted); padding:6px 8px; border-radius:8px; cursor:pointer;}
   .delete-btn:hover{background:rgba(185,74,74,0.08); color:var(--danger); border-color:var(--danger);}
@@ -144,110 +166,107 @@
   .sort-btn{background:transparent; border:1px dashed rgba(255,255,255,0.04); color:var(--muted); padding:6px 8px; border-radius:6px; cursor:pointer;}
   .sort-btn:hover{color:var(--gold); border-color:var(--gold);}
 
-  @media (max-width:600px){
+    @media (max-width:600px){
     body{padding:12px;}
     header{flex-direction:column; align-items:flex-start; gap:10px;}
     h1{font-size:18px;}
     .menu-area{grid-template-columns:1fr;}
   }
 
+  /* デバイスインジケーター */
   .device-indicator{
-    position:fixed; bottom:10px; right:10px;
+    position:fixed;
+    bottom:80px; /* ← フッターと重ならないよう調整済み */
+    right:10px;
     background:rgba(0,0,0,0.45);
-    padding:6px 10px; border-radius:8px;
-    font-size:12px; color:var(--muted);
+    padding:6px 10px;
+    border-radius:8px;
+    font-size:12px;
+    color:var(--muted);
     z-index:9999;
   }
 
-  .dialog{position:fixed; inset:0; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.6); z-index:9998;}
+  .dialog{
+    position:fixed;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:rgba(0,0,0,0.6);
+    z-index:9998;
+  }
   .dialog.hidden{display:none;}
-  .dialog-content{background:linear-gradient(180deg,#0f1113,#141417); padding:16px; border-radius:12px; width:320px; color:var(--muted); border:1px solid rgba(255,255,255,0.02);}
-  .dialog-content input, .dialog-content select{width:100%; padding:8px; border-radius:8px; background:transparent; color:var(--muted); margin-bottom: 260px;}
-  .top-logo {
-  display: none !important;
-}
 
-
-  /* --- 食べ物 / 飲み物ラベル：薄い金色背景で強調 --- */
-  .menu-group-header{
-    background: rgba(201,162,39,0.12);
-    padding: 10px 14px;
-    border-radius: 10px;
-    margin-bottom: 260px;
-    border: 1px solid rgba(201,162,39,0.25);
-    box-shadow: 0 0 10px rgba(0,0,0,0.35);
+  .dialog-content{
+    background:linear-gradient(180deg,#0f1113,#141417);
+    padding:16px;
+    border-radius:12px;
+    width:320px;
+    color:var(--muted);
+    border:1px solid rgba(255,255,255,0.02);
   }
-  .menu-group-header h2{
-    margin: 0;
-    font-size: 20px;
-    font-weight: 900;
-    color: var(--gold);
-    display: flex;
-    align-items: center;
-    gap: 8px;
+  .dialog-content input,
+  .dialog-content select{
+    width:100%;
+    padding:8px;
+    border-radius:8px;
+    background:transparent;
+    color:var(--muted);
+    margin-bottom:10px;
   }
 
-  /* --- ゴールド追尾フッター（コンテナ幅にフィット） --- */
+  .top-logo { display:none !important; }
+
+  /* --- ゴールド追尾フッター --- */
   .total-bar{
     position: fixed;
     left: 0;
     bottom: 0;
     width: 100%;
-    display: flex;
-    justify-content: center;
+    display:flex;
+    justify-content:center;
     z-index: 9998;
   }
+
   .total-bar-inner{
-    width: 100%;
-    max-width: 1200px;
+    width:100%;
+    max-width:1200px;
     background: linear-gradient(180deg,#c9a227,#9f821d);
     padding: 12px 18px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-top: 2px solid rgba(255,255,255,0.3);
-    box-shadow: 0 -4px 18px rgba(0,0,0,0.6);
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    border-top:2px solid rgba(255,255,255,0.3);
+    box-shadow:0 -4px 18px rgba(0,0,0,0.6);
   }
+
   .total-text{
-    font-size: 22px;
-    font-weight: 900;
-    color: #fff;
-    text-shadow: 0 0 6px rgba(0,0,0,0.45);
+    font-size:22px;
+    font-weight:900;
+    color:#fff;
+    text-shadow:0 0 6px rgba(0,0,0,0.45);
   }
+
   .reset-btn-footer{
     background: rgba(0,0,0,0.25);
-    color: #fff;
-    padding: 10px 18px;
-    border-radius: 10px;
-    border: 1px solid rgba(255,255,255,0.45);
-    font-size: 14px;
-    cursor: pointer;
+    color:#fff;
+    padding:10px 18px;
+    border-radius:10px;
+    border:1px solid rgba(255,255,255,0.45);
+    font-size:14px;
+    cursor:pointer;
   }
   .reset-btn-footer:hover{
-    background: rgba(0,0,0,0.4);
+    background:rgba(0,0,0,0.4);
   }
-
-  /* デバイス表示ラベルがフッターと重ならないように調整 */
-  .device-indicator{
-    bottom: 80px;
-  }
-
-
-body {
-  padding-bottom: 240px !important;
-}
-@media (max-width: 600px) {
-  body {
-    padding-bottom: 240px !important;
-  }
-}
-
 </style>
 </head>
+
 <body>
+<main>
 <div class="container">
 
-  <!-- ロゴ（店舗ごとに変更される） -->
+  <!-- ロゴ（非表示） -->
   <img src="logo.png" class="top-logo" alt="GOG logo">
 
   <header>
@@ -258,7 +277,6 @@ body {
 
     <div class="top-controls">
       <button class="btn small" id="editModeBtn">編集モード</button>
-      
       <button class="btn small" id="deviceToggleBtn">PC/スマホ切替</button>
     </div>
   </header>
@@ -293,7 +311,7 @@ body {
 <div id="deleteDialog" class="dialog hidden">
   <div class="dialog-content">
     <h3>削除確認</h3>
-    <div id="deleteTargetName" style="margin-bottom: 260px;"></div>
+    <div id="deleteTargetName" style="margin-bottom:10px;"></div>
     <div class="dialog-buttons">
       <button class="btn small" id="deleteCancel">キャンセル</button>
       <button class="btn small" id="deleteConfirm" style="background:rgba(185,74,74,0.25); color:#ffbdbd;">削除する</button>
@@ -302,15 +320,16 @@ body {
 </div>
 
 <script>
-
-// --- Unified reset function (footer only) ---
+// ==========================
+// 共通リセット
+// ==========================
 function resetAll() {
   Object.keys(qtyMap).forEach(k => qtyMap[k] = 0);
   renderMenus();
 }
 
 // ==========================
-//  店舗データ
+// 店舗データ
 // ==========================
 const stores = {
   "Bar105": {
@@ -375,17 +394,15 @@ const stores = {
 };
 
 // ==========================
-// ★ URL パラメータ → 店舗判定（大文字小文字無視で修正）
+// URL パラメータ → 店舗判定
 // ==========================
 function getStoreFromURL() {
   const params = new URLSearchParams(location.search);
   let store = params.get("store");
-
   if (!store) return "Bar105";
 
   const normalized = store.toLowerCase();
   const matched = Object.keys(stores).find(key => key.toLowerCase() === normalized);
-
   return matched || "Bar105";
 }
 
@@ -393,7 +410,7 @@ let currentStoreKey = getStoreFromURL();
 let currentStore = JSON.parse(JSON.stringify(stores[currentStoreKey]));
 
 // ==========================
-// ロゴ・タイトル反映
+// タイトルとロゴ適用
 // ==========================
 function applyStoreBranding() {
   document.getElementById("pageTitle").textContent =
@@ -404,7 +421,8 @@ function applyStoreBranding() {
 }
 applyStoreBranding();
 
-// 数量操作
+// ==========================
+// 数量の管理
 // ==========================
 const qtyMap = {};
 
@@ -479,7 +497,7 @@ function renderMenus() {
 renderMenus();
 
 // ==========================
-// 合計
+// 合計金額
 // ==========================
 function renderSummary() {
   let total = 0;
@@ -505,14 +523,12 @@ function renderSummary() {
   document.getElementById("summary").innerHTML =
     html + `<div class="total">合計：¥${total.toLocaleString()}</div>`;
 
-  const footerTotal = document.getElementById("totalAmountFooter");
-  if (footerTotal) {
-    footerTotal.textContent = `合計：¥${total.toLocaleString()}`;
-  }
+  document.getElementById("totalAmountFooter").textContent =
+    `合計：¥${total.toLocaleString()}`;
 }
 
 // ==========================
-// 並び替え
+// 並べ替え
 // ==========================
 function sortGroup(group) {
   currentStore.menus[group].sort((a, b) => a.price - b.price);
@@ -520,7 +536,29 @@ function sortGroup(group) {
 }
 
 // ==========================
-// メニュー追加
+// 削除ダイアログ
+// ==========================
+let deleteGroup = null;
+let deleteIndex = null;
+
+function openDeleteDialog(group, index) {
+  deleteGroup = group;
+  deleteIndex = index;
+  deleteTargetName.textContent =
+    `「${currentStore.menus[group][index].name}」を削除しますか？`;
+  deleteDialog.classList.remove("hidden");
+}
+
+document.getElementById("deleteCancel").onclick = () => deleteDialog.classList.add("hidden");
+
+document.getElementById("deleteConfirm").onclick = () => {
+  currentStore.menus[deleteGroup].splice(deleteIndex, 1);
+  deleteDialog.classList.add("hidden");
+  renderMenus();
+};
+
+// ==========================
+// 追加モード
 // ==========================
 document.getElementById("editModeBtn").onclick = () => {
   addDialog.classList.remove("hidden");
@@ -552,89 +590,45 @@ document.getElementById("addConfirm").onclick = () => {
 };
 
 // ==========================
-// 削除
-// ==========================
-let deleteGroup = null;
-let deleteIndex = null;
-
-function openDeleteDialog(group, index) {
-  deleteGroup = group;
-  deleteIndex = index;
-  deleteTargetName.textContent =
-    `「${currentStore.menus[group][index].name}」を削除しますか？`;
-  deleteDialog.classList.remove("hidden");
-}
-
-document.getElementById("deleteCancel").onclick = () => {
-  deleteDialog.classList.add("hidden");
-};
-
-document.getElementById("deleteConfirm").onclick = () => {
-  currentStore.menus[deleteGroup].splice(deleteIndex, 1);
-  deleteDialog.classList.add("hidden");
-  renderMenus();
-};
-
-// ==========================
-// 全リセット
-function resetAll(){
-  Object.keys(qtyMap).forEach(k=>qtyMap[k]=0);
-  renderMenus();
-}
-
-
-// フッター側リセットボタン（ヘッダーと同じ動き）
-const footerResetBtn = document.getElementById("footerResetBtn");
-if (footerResetBtn) {
-  footerResetBtn.onclick = () => { resetAll(); };
-}
-
-// ==========================
-// デバイス切替
+// スマホ / PC 表示切替
 // ==========================
 const indicator = document.getElementById("deviceIndicator");
 let forcedMode = null;
 
 function applyDeviceMode() {
-  let isMobile;
-
-  if (forcedMode === "mobile") isMobile = true;
-  else if (forcedMode === "pc") isMobile = false;
-  else isMobile = window.innerWidth < 600;
+  let isMobile = forcedMode === "mobile"
+    ? true
+    : forcedMode === "pc"
+      ? false
+      : window.innerWidth < 600;
 
   indicator.textContent = isMobile ? "📱 スマホ表示" : "🖥 PC表示";
 
-  if (isMobile)
-    document.body.classList.add("mobile-mode");
-  else
-    document.body.classList.remove("mobile-mode");
+  if (isMobile) document.body.classList.add("mobile-mode");
+  else document.body.classList.remove("mobile-mode");
 }
 
 window.onresize = applyDeviceMode;
 applyDeviceMode();
 
 document.getElementById("deviceToggleBtn").onclick = () => {
-  if (forcedMode === "mobile") forcedMode = "pc";
-  else if (forcedMode === "pc") forcedMode = null;
-  else forcedMode = "mobile";
-
+  forcedMode = forcedMode === "mobile"
+    ? "pc"
+    : forcedMode === "pc"
+      ? null
+      : "mobile";
   applyDeviceMode();
 };
 
-
-// ---- フッターリセットを確実に動作させる ----
-window.addEventListener("DOMContentLoaded", () => {
-  const footerResetBtn = document.getElementById("footerResetBtn");
-  if (footerResetBtn) {
-    footerResetBtn.addEventListener("click", () => {
-      resetAll();
-    });
-  }
-});
-
+// ==========================
+// フッターのリセットを確実に動作させる
+// ==========================
+document.getElementById("footerResetBtn").onclick = () => resetAll();
 </script>
 
-
+<!-- ==========================
+  追尾フッター
+=========================== -->
 <div class="total-bar">
   <div class="total-bar-inner">
     <div id="totalAmountFooter" class="total-text">合計：¥0</div>
@@ -642,6 +636,6 @@ window.addEventListener("DOMContentLoaded", () => {
   </div>
 </div>
 
-
+</main>
 </body>
 </html>
