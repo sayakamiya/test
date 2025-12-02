@@ -233,19 +233,42 @@
 
   .top-logo{ display:none !important; }
 
-  /* スマホ版フォントアップ */
-  @media (max-width:600px){
-    .name{font-size:17px !important;}
-    .price{font-size:17px !important;}
-    .qty-label{font-size:15px !important;}
-    .qty{font-size:19px !important;}
+ /* スマホ版フォントアップ */
+@media (max-width:600px){
+  .name{font-size:17px !important;}
+  .price{font-size:17px !important;}
+  .qty-label{font-size:15px !important;}
+  .qty{font-size:19px !important;}
 
-    .qty-btn{
-      width:50px !important;
-      height:50px !important;
-      font-size:18px !important;
-    }
+  .qty-btn{
+    width:50px !important;
+    height:50px !important;
+    font-size:18px !important;
   }
+}
+
+/* 編集モードOFF のとき削除ボタンを非表示にする */
+.delete-btn{
+  display:none;
+}
+
+/* 編集モードON時にだけ削除ボタンを出す */
+.edit-mode .delete-btn{
+  display:inline-block;
+}
+
+/* メニュー間の上下の隙間を縮める（全デバイス） */
+.menu-item{
+  margin-bottom:8px !important;
+}
+.menu-group{
+  padding-top:10px !important;
+  padding-bottom:10px !important;
+  margin-bottom:12px !important;
+}
+.menu-group-header{
+  margin-bottom:10px !important;
+}
 </style>
 </head>
 
