@@ -203,6 +203,7 @@
     border:1px solid rgba(255,255,255,0.45);
     color:white;
     background:rgba(0,0,0,0.25);
+    cursor:pointer;
   }
 
   .device-indicator{
@@ -240,14 +241,10 @@
 
 </div> <!-- container -->
 
-  <!-- ==========================
-  デバイスインジケーター
-=========================== -->
+<!-- デバイスインジケーター -->
 <div id="deviceIndicator" class="device-indicator"></div>
 
-<!-- ==========================
-  追加ダイアログ
-=========================== -->
+<!-- 追加ダイアログ -->
 <div id="addDialog" class="dialog hidden">
   <div class="dialog-content">
     <h3>メニュー追加</h3>
@@ -266,9 +263,7 @@
   </div>
 </div>
 
-<!-- ==========================
-  削除ダイアログ
-=========================== -->
+<!-- 削除ダイアログ -->
 <div id="deleteDialog" class="dialog hidden">
   <div class="dialog-content">
     <h3>削除確認</h3>
@@ -282,14 +277,20 @@
   </div>
 </div>
 
+<!-- 追尾フッター -->
+<div class="total-bar">
+  <div class="total-bar-inner">
+    <div id="totalAmountFooter" class="total-text">合計：¥0</div>
+    <button id="footerResetBtn" class="reset-btn-footer">リセット</button>
+  </div>
+</div>
 
-<!-- ==========================
-  JavaScript 本体
-=========================== -->
+</main>
+
 <script>
-// ===================================
-//  1) 店舗データ
-// ===================================
+// ==============================
+// 店舗データ
+// ==============================
 const stores = {
   "Bar105": {
     displayName: "Bar105",
@@ -352,58 +353,60 @@ const stores = {
   }
 };
 
-
-// ===================================
-//  2) URL パラメータ → 店舗判定
-// ===================================
+// URL から店舗キー取得（大文字小文字無視）
 function getStoreFromURL() {
   const params = new URLSearchParams(location.search);
   let store = params.get("store");
-
   if (!store) return "Bar105";
-
   const normalized = store.toLowerCase();
-  const matched = Object.keys(stores).find(
-    key => key.toLowerCase() === normalized
-  );
-
+  const matched = Object.keys(stores).find(key => key.toLowerCase() === normalized);
   return matched || "Bar105";
 }
 
 let currentStoreKey = getStoreFromURL();
 let currentStore = JSON.parse(JSON.stringify(stores[currentStoreKey]));
 
-
-// ===================================
-//  3) タイトル / ロゴ
-// ===================================
-function applyStoreBranding() {
-  document.getElementById("pageTitle").textContent =
-    "🍸 " + currentStore.displayName + " — オーダー計算ツール";
-}
-applyStoreBranding();
-
-
-// ===================================
-//  4) 数量管理
-// ===================================
+// 数量マップ
 const qtyMap = {};
 
+// DOM 取得
+const menuArea = document.getElementById("menuArea");
+const summaryEl = document.getElementById("summary");
+const pageTitleEl = document.getElementById("pageTitle");
+const deviceIndicator = document.getElementById("deviceIndicator");
+const editModeBtn = document.getElementById("editModeBtn");
+const deviceToggleBtn = document.getElementById("deviceToggleBtn");
+const addDialog = document.getElementById("addDialog");
+const addName = document.getElementById("addName");
+const addPrice = document.getElementById("addPrice");
+const addInfo = document.getElementById("addInfo");
+const addGroup = document.getElementById("addGroup");
+const addCancel = document.getElementById("addCancel");
+const addConfirm = document.getElementById("addConfirm");
+const deleteDialog = document.getElementById("deleteDialog");
+const deleteTargetName = document.getElementById("deleteTargetName");
+const deleteCancel = document.getElementById("deleteCancel");
+const deleteConfirm = document.getElementById("deleteConfirm");
+const totalAmountFooter = document.getElementById("totalAmountFooter");
+const footerResetBtn = document.getElementById("footerResetBtn");
+
+// タイトル反映
+function applyStoreBranding() {
+  pageTitleEl.textContent = "🍸 " + currentStore.displayName + " — オーダー計算ツール";
+}
+
+// 数量加算
 function addQty(id, num) {
   qtyMap[id] = (qtyMap[id] || 0) + num;
   if (qtyMap[id] < 0) qtyMap[id] = 0;
-
-  document.getElementById("qty_" + id).textContent = qtyMap[id];
+  const el = document.getElementById("qty_" + id);
+  if (el) el.textContent = qtyMap[id];
   renderSummary();
 }
 
-
-// ===================================
-//  5) メニュー描画
-// ===================================
+// メニュー描画
 function renderMenus() {
-  const area = document.getElementById("menuArea");
-  area.innerHTML = "";
+  menuArea.innerHTML = "";
 
   ["food", "drink"].forEach(group => {
     const box = document.createElement("div");
@@ -412,16 +415,14 @@ function renderMenus() {
     box.innerHTML = `
       <div class="menu-group-header">
         <h2>${group === "food" ? "🍽 食べ物" : "🥂 飲み物"}</h2>
-        <button class="sort-btn" onclick="sortGroup('${group}')">価格で並び替え</button>
+        <button class="sort-btn" data-group="${group}">価格で並び替え</button>
       </div>
     `;
 
     currentStore.menus[group].forEach((item, index) => {
       const itemId = `${group}_${index}`;
-
       const div = document.createElement("div");
       div.className = "menu-item";
-
       div.innerHTML = `
         <div class="top-line">
           <div class="name">${item.name}</div>
@@ -431,39 +432,32 @@ function renderMenus() {
 
         <div class="controls-row">
           <div class="btn-row">
-            <button class="qty-btn" onclick="addQty('${itemId}', 1)">+1</button>
-            <button class="qty-btn" onclick="addQty('${itemId}', 5)">+5</button>
-            <button class="qty-btn" onclick="addQty('${itemId}', 10)">+10</button>
-            <button class="qty-btn" onclick="addQty('${itemId}', 50)">+50</button>
+            <button class="qty-btn" data-id="${itemId}" data-delta="1">+1</button>
+            <button class="qty-btn" data-id="${itemId}" data-delta="5">+5</button>
+            <button class="qty-btn" data-id="${itemId}" data-delta="10">+10</button>
+            <button class="qty-btn" data-id="${itemId}" data-delta="50">+50</button>
 
-            <span id="qty_${itemId}" class="qty">0</span>
+            <span id="qty_${itemId}" class="qty">${qtyMap[itemId] || 0}</span>
 
-            <button class="qty-btn" onclick="addQty('${itemId}', -1)">-1</button>
-            <button class="qty-btn" onclick="addQty('${itemId}', -5)">-5</button>
-            <button class="qty-btn" onclick="addQty('${itemId}', -10)">-10</button>
-            <button class="qty-btn" onclick="addQty('${itemId}', -50)">-50</button>
+            <button class="qty-btn" data-id="${itemId}" data-delta="-1">-1</button>
+            <button class="qty-btn" data-id="${itemId}" data-delta="-5">-5</button>
+            <button class="qty-btn" data-id="${itemId}" data-delta="-10">-10</button>
+            <button class="qty-btn" data-id="${itemId}" data-delta="-50">-50</button>
           </div>
 
-          <button class="delete-btn" onclick="openDeleteDialog('${group}', ${index})">削除</button>
+          <button class="delete-btn" data-del-group="${group}" data-del-index="${index}">削除</button>
         </div>
       `;
-
-      area.appendChild(div);
+      box.appendChild(div);
     });
+
+    menuArea.appendChild(box);
   });
 
   renderSummary();
 }
 
-renderMenus();
-<!-- ==========================
-  JavaScript：後半（合計・削除・追加・デバイス切替）
-=========================== -->
-
-<script>
-// ===================================
-//  6) 合計金額の描画
-// ===================================
+// 合計描画
 function renderSummary() {
   let total = 0;
   let html = "";
@@ -473,9 +467,9 @@ function renderSummary() {
     if (q > 0) {
       const [group, index] = id.split("_");
       const item = currentStore.menus[group][index];
+      if (!item) return;
       const sub = item.price * q;
       total += sub;
-
       html += `
         <div class="order-line">
           <span>${item.name} × ${q}</span>
@@ -485,131 +479,120 @@ function renderSummary() {
     }
   });
 
-  document.getElementById("summary").innerHTML =
-    html + `<div class="total">合計：¥${total.toLocaleString()}</div>`;
-
-  // 追尾フッターにも反映
-  document.getElementById("totalAmountFooter").textContent =
-    `合計：¥${total.toLocaleString()}`;
+  summaryEl.innerHTML = html + `<div class="total">合計：¥${total.toLocaleString()}</div>`;
+  totalAmountFooter.textContent = `合計：¥${total.toLocaleString()}`;
 }
 
-
-// ===================================
-//  7) 金額順ソート
-// ===================================
+// 並べ替え
 function sortGroup(group) {
-  currentStore.menus[group].sort((a, b) => a.price - b.price);
+  currentStore.menus[group].sort((a,b) => a.price - b.price);
   renderMenus();
 }
 
-
-// ===================================
-//  8) 削除ダイアログ
-// ===================================
+// 削除ダイアログ制御
 let deleteGroup = null;
 let deleteIndex = null;
 
 function openDeleteDialog(group, index) {
   deleteGroup = group;
   deleteIndex = index;
-
   deleteTargetName.textContent =
     `「${currentStore.menus[group][index].name}」を削除しますか？`;
-
   deleteDialog.classList.remove("hidden");
 }
 
-deleteCancel.onclick = () => deleteDialog.classList.add("hidden");
+// イベントセットアップ
+function setupEvents() {
+  // 数量ボタン / 並び替え / 削除（イベントデリゲーション）
+  menuArea.addEventListener("click", (e) => {
+    const btn = e.target.closest(".qty-btn");
+    if (btn && btn.dataset.id) {
+      const id = btn.dataset.id;
+      const delta = Number(btn.dataset.delta || 0);
+      addQty(id, delta);
+    }
 
-deleteConfirm.onclick = () => {
-  currentStore.menus[deleteGroup].splice(deleteIndex, 1);
-  deleteDialog.classList.add("hidden");
-  renderMenus();
-};
+    const sortBtn = e.target.closest(".sort-btn");
+    if (sortBtn && sortBtn.dataset.group) {
+      sortGroup(sortBtn.dataset.group);
+    }
 
+    const delBtn = e.target.closest(".delete-btn");
+    if (delBtn && delBtn.dataset.delGroup) {
+      openDeleteDialog(delBtn.dataset.delGroup, Number(delBtn.dataset.delIndex));
+    }
+  });
 
-// ===================================
-//  9) 編集モード（追加）
-// ===================================
-editModeBtn.onclick = () => addDialog.classList.remove("hidden");
-addCancel.onclick = () => addDialog.classList.add("hidden");
+  // 編集モード → 追加ダイアログ
+  editModeBtn.addEventListener("click", () => {
+    addDialog.classList.remove("hidden");
+  });
+  addCancel.addEventListener("click", () => {
+    addDialog.classList.add("hidden");
+  });
+  addConfirm.addEventListener("click", () => {
+    const name = addName.value.trim();
+    const price = Number(addPrice.value);
+    const info = addInfo.value.trim();
+    const group = addGroup.value;
+    if (!name || !price) {
+      alert("名前と価格は必須です");
+      return;
+    }
+    currentStore.menus[group].push({ name, price, info });
+    addName.value = "";
+    addPrice.value = "";
+    addInfo.value = "";
+    addDialog.classList.add("hidden");
+    renderMenus();
+  });
 
-addConfirm.onclick = () => {
-  const name = addName.value.trim();
-  const price = Number(addPrice.value);
-  const info = addInfo.value.trim();
-  const group = addGroup.value;
+  // 削除ダイアログ
+  deleteCancel.addEventListener("click", () => {
+    deleteDialog.classList.add("hidden");
+  });
+  deleteConfirm.addEventListener("click", () => {
+    if (deleteGroup != null && deleteIndex != null) {
+      currentStore.menus[deleteGroup].splice(deleteIndex, 1);
+      deleteDialog.classList.add("hidden");
+      renderMenus();
+    }
+  });
 
-  if (!name || !price) {
-    alert("名前と価格は必須です");
-    return;
+  // デバイス表示切替
+  let forcedMode = null;
+  function applyDeviceMode() {
+    let isMobile;
+    if (forcedMode === "mobile") isMobile = true;
+    else if (forcedMode === "pc") isMobile = false;
+    else isMobile = window.innerWidth < 600;
+
+    deviceIndicator.textContent = isMobile ? "📱 スマホ表示" : "🖥 PC表示";
+    if (isMobile) document.body.classList.add("mobile-mode");
+    else document.body.classList.remove("mobile-mode");
   }
-
-  currentStore.menus[group].push({ name, price, info });
-
-  addDialog.classList.add("hidden");
-  addName.value = "";
-  addPrice.value = "";
-  addInfo.value = "";
-
-  renderMenus();
-};
-
-
-// ===================================
-// 10) デバイス表示切替
-// ===================================
-let forcedMode = null;
-const indicator = document.getElementById("deviceIndicator");
-
-function applyDeviceMode() {
-  let isMobile;
-
-  if (forcedMode === "mobile") isMobile = true;
-  else if (forcedMode === "pc") isMobile = false;
-  else isMobile = window.innerWidth < 600;
-
-  indicator.textContent = isMobile ? "📱 スマホ表示" : "🖥 PC表示";
-
-  if (isMobile) document.body.classList.add("mobile-mode");
-  else document.body.classList.remove("mobile-mode");
-}
-
-window.onresize = applyDeviceMode;
-applyDeviceMode();
-
-deviceToggleBtn.onclick = () => {
-  if (forcedMode === "mobile") forcedMode = "pc";
-  else if (forcedMode === "pc") forcedMode = null;
-  else forcedMode = "mobile";
-
+  window.addEventListener("resize", applyDeviceMode);
   applyDeviceMode();
-};
 
+  deviceToggleBtn.addEventListener("click", () => {
+    if (forcedMode === "mobile") forcedMode = "pc";
+    else if (forcedMode === "pc") forcedMode = null;
+    else forcedMode = "mobile";
+    applyDeviceMode();
+  });
 
-// ===================================
-// 11) リセット（完全統一版）
-// ===================================
-function resetAll() {
-  Object.keys(qtyMap).forEach(k => qtyMap[k] = 0);
-  renderMenus();
+  // リセット
+  footerResetBtn.addEventListener("click", () => {
+    Object.keys(qtyMap).forEach(k => qtyMap[k] = 0);
+    renderMenus();
+  });
 }
 
-footerResetBtn.onclick = () => resetAll();
-
+// 初期化
+applyStoreBranding();
+renderMenus();
+setupEvents();
 </script>
 
-
-<!-- ==========================
-  固定フッター（追尾合計）
-=========================== -->
-<div class="total-bar">
-  <div class="total-bar-inner">
-    <div id="totalAmountFooter" class="total-text">合計：¥0</div>
-    <button id="footerResetBtn" class="reset-btn-footer">リセット</button>
-  </div>
-</div>
-
-</main>
 </body>
 </html>
