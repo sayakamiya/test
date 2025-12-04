@@ -282,6 +282,30 @@
   /* ロゴは非表示（でっかいロゴを出さない） */
   .top-logo{display:none !important;}
 
+  /* ============================
+   フッター重なりを防ぐ余白調整
+============================ */
+
+/* summary（選択済み商品一覧）がフッターに被らないように余白確保 */
+.summary {
+  padding-bottom: 220px !important;
+}
+
+/* body 全体の下部余白もさらに余裕を持たせる */
+body {
+  padding-bottom: 300px !important;
+}
+
+/* スマホ時も同様に余白を確保 */
+@media (max-width:600px) {
+  .summary {
+    padding-bottom: 240px !important;
+  }
+  body {
+    padding-bottom: 300px !important;
+  }
+}
+  
   /* スマホ用調整（フォント＆ボタン少し大きめ＋密度UP） */
   @media (max-width:600px){
     body{
