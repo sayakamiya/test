@@ -22,7 +22,7 @@
 
   body{
     padding:20px;
-    padding-bottom:260px; /* フッターぶん余白を確保してかぶり防止 */
+    padding-bottom:260px;
     font-family:"Noto Sans JP", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
     background: linear-gradient(180deg, var(--navy), #071028);
     color:var(--muted);
@@ -40,7 +40,6 @@
 
   .container{max-width:1200px; margin:0 auto;}
 
-  /* ヘッダー */
   header{
     display:flex;
     align-items:center;
@@ -52,7 +51,6 @@
   h1{margin:0; color:var(--gold); font-size:20px;}
   .subtitle{font-size:13px; color:#d6c99a;}
 
-  /* ボタン類 */
   .btn{
     background:#2b2330;
     color:var(--muted);
@@ -67,7 +65,6 @@
 
   .top-controls{display:flex; gap:8px; align-items:center; flex-wrap:wrap;}
 
-  /* メニューエリア */
   .menu-area{
     display:grid;
     grid-template-columns:1fr 1fr;
@@ -107,7 +104,7 @@
     background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.2));
     border-radius:10px;
     padding:8px 10px;
-    margin-bottom:6px; /* ← メニュー間の隙間を狭める */
+    margin-bottom:6px;
     border:1px solid rgba(255,255,255,0.04);
     display:flex;
     flex-direction:column;
@@ -163,7 +160,7 @@
     color:#fff;
   }
 
-  /* 削除ボタン：編集モードONの時だけ表示 */
+  /* 編集モードの削除ボタン */
   .delete-btn{
     background:transparent;
     border:1px solid rgba(255,255,255,0.35);
@@ -176,8 +173,7 @@
   body:not(.edit-mode) .delete-btn{
     display:none !important;
   }
-
-  /* 集計エリア（メモ欄） */
+  /* summary（メモ欄） */
   .summary{
     margin-top:14px;
     background:rgba(255,255,255,0.03);
@@ -199,7 +195,7 @@
     font-weight:800;
   }
 
-  /* 固定フッター（合計＋リセット） */
+  /* フッター（追尾） */
   .total-bar{
     position:fixed;
     bottom:0;
@@ -234,7 +230,7 @@
     cursor:pointer;
   }
 
-  /* デバイスインジケーター（フッターにかぶらない位置） */
+  /* デバイスインジケーター */
   .device-indicator{
     position:fixed;
     bottom:90px;
@@ -279,34 +275,18 @@
     color:var(--muted);
   }
 
-  /* ロゴは非表示（でっかいロゴを出さない） */
+  /* ロゴ非表示 */
   .top-logo{display:none !important;}
 
-  /* ============================
-   フッター重なりを防ぐ余白調整
-============================ */
-
-/* summary（選択済み商品一覧）がフッターに被らないように余白確保 */
-.summary {
-  padding-bottom: 220px !important;
-}
-
-/* body 全体の下部余白もさらに余裕を持たせる */
-body {
-  padding-bottom: 300px !important;
-}
-
-/* スマホ時も同様に余白を確保 */
-@media (max-width:600px) {
-  .summary {
-    padding-bottom: 240px !important;
+  /* summary がフッターに重ならないよう調整 */
+  .summary{
+    padding-bottom:220px !important;
   }
-  body {
-    padding-bottom: 300px !important;
+  body{
+    padding-bottom:300px !important;
   }
-}
-  
-  /* スマホ用調整（フォント＆ボタン少し大きめ＋密度UP） */
+
+  /* スマホ版フォント調整 */
   @media (max-width:600px){
     body{
       padding:12px;
@@ -321,11 +301,14 @@ body {
     .price{font-size:17px;}
     .qty-label{font-size:14px;}
     .qty{font-size:19px;}
-
     .qty-btn{
       width:50px;
       height:50px;
       font-size:18px;
+    }
+
+    .summary{
+      padding-bottom:240px !important;
     }
   }
 </style>
@@ -351,21 +334,22 @@ body {
 
     <div id="summary" class="summary"></div>
 
-  </div><!-- /.container -->
+  </div><!-- container -->
 
   <div id="deviceIndicator" class="device-indicator"></div>
 
-  <!-- 追加ダイアログ（今はボタンは無いが、将来用に残しておく） -->
+  <!-- 追加ダイアログ -->
   <div id="addDialog" class="dialog hidden">
     <div class="dialog-content">
-      <h3>メニュー追加</h3>
+      <h3>新規メニュー追加</h3>
+      <select id="addGroup">
+        <option value="food">🍽 食べ物</option>
+        <option value="drink">🥂 飲み物</option>
+      </select>
       <input id="addName"  placeholder="商品名">
       <input id="addPrice" placeholder="価格" type="number">
       <input id="addInfo"  placeholder="説明（例：腹50%）">
-      <select id="addGroup">
-        <option value="food">食べ物</option>
-        <option value="drink">飲み物</option>
-      </select>
+
       <div style="display:flex; gap:10px; margin-top:8px;">
         <button class="btn small" id="addCancel"  style="flex:1;">キャンセル</button>
         <button class="btn small" id="addConfirm" style="flex:1;">追加</button>
@@ -387,7 +371,7 @@ body {
     </div>
   </div>
 
-  <!-- 固定フッター（合計＋リセット） -->
+  <!-- フッター（固定） -->
   <div class="total-bar">
     <div class="total-bar-inner">
       <div id="totalAmountFooter" class="total-text">合計：¥0</div>
@@ -396,7 +380,6 @@ body {
   </div>
 
 </main>
-
 <script>
 /* ==========================
    店舗データ
@@ -426,6 +409,7 @@ const stores = {
       ]
     }
   },
+
   "CLUB210": {
     displayName: "CLUB210",
     menus: {
@@ -441,6 +425,7 @@ const stores = {
       ]
     }
   },
+
   "LOUNGE315": {
     displayName: "LOUNGE315",
     menus: {
@@ -459,21 +444,23 @@ const stores = {
 };
 
 /* ==========================
-   店舗キー判定 (?store=bar105 等)
+   店舗キー判定 (?store=bar105)
 ========================== */
 function getStoreFromURL(){
-  const params = new URLSearchParams(location.search);
-  const raw = params.get("store");
+  const raw = new URLSearchParams(location.search).get("store");
   if(!raw) return "Bar105";
-  const lower = raw.toLowerCase();
-  return Object.keys(stores).find(k => k.toLowerCase() === lower) || "Bar105";
+
+  const key = Object.keys(stores).find(
+    k => k.toLowerCase() === raw.toLowerCase()
+  );
+  return key || "Bar105";
 }
 
-const currentStoreKey = getStoreFromURL();
+let currentStoreKey = getStoreFromURL();
 let currentStore = JSON.parse(JSON.stringify(stores[currentStoreKey]));
 
 /* ==========================
-   DOM 取得
+   DOM 変数
 ========================== */
 const pageTitle       = document.getElementById("pageTitle");
 const menuArea        = document.getElementById("menuArea");
@@ -500,7 +487,7 @@ const footerTotal     = document.getElementById("totalAmountFooter");
 const footerResetBtn  = document.getElementById("footerResetBtn");
 
 /* ==========================
-   タイトル
+   タイトル反映
 ========================== */
 pageTitle.textContent = `🍸 ${currentStore.displayName} — オーダー計算ツール`;
 
@@ -518,8 +505,7 @@ function addQty(id, diff){
 
   renderSummary();
 }
-window.addQty = addQty; // onclick から呼べるようにグローバル公開
-
+window.addQty = addQty; // グローバル公開（onclick用）
 /* ==========================
    メニュー描画
 ========================== */
@@ -527,6 +513,7 @@ function renderMenus(){
   menuArea.innerHTML = "";
 
   ["food","drink"].forEach(group => {
+
     const groupBox = document.createElement("div");
     groupBox.className = "menu-group";
 
@@ -538,18 +525,31 @@ function renderMenus(){
     `;
 
     currentStore.menus[group].forEach((item, index) => {
+
       const itemId = `${group}_${index}`;
       const itemEl = document.createElement("div");
       itemEl.className = "menu-item";
 
+      /* 編集モードでは「名前」と「金額」を直接編集できるフィールドにする */
+      const nameField = isEditMode
+        ? `<input class="edit-name" data-group="${group}" data-index="${index}" value="${item.name}">`
+        : `<div class="name">${item.name}</div>`;
+
+      const priceField = isEditMode
+        ? `<input class="edit-price" type="number" data-group="${group}" data-index="${index}" value="${item.price}">`
+        : `<div class="price">¥${item.price.toLocaleString()}</div>`;
+
       itemEl.innerHTML = `
         <div class="top-line">
-          <div class="name">${item.name}</div>
-          <div class="price">¥${item.price.toLocaleString()}</div>
+          ${nameField}
+          ${priceField}
         </div>
+
         <div class="qty-label">${item.info}</div>
+
         <div class="controls-row">
           <div class="btn-row">
+
             <button class="qty-btn" onclick="addQty('${itemId}',1)">+1</button>
             <button class="qty-btn" onclick="addQty('${itemId}',5)">+5</button>
             <button class="qty-btn" onclick="addQty('${itemId}',10)">+10</button>
@@ -561,8 +561,10 @@ function renderMenus(){
             <button class="qty-btn" onclick="addQty('${itemId}',-5)">-5</button>
             <button class="qty-btn" onclick="addQty('${itemId}',-10)">-10</button>
             <button class="qty-btn" onclick="addQty('${itemId}',-50)">-50</button>
+
           </div>
 
+          <!-- 削除は編集モード時のみ表示 -->
           <button class="delete-btn" onclick="openDeleteDialog('${group}',${index})">削除</button>
         </div>
       `;
@@ -573,12 +575,45 @@ function renderMenus(){
     menuArea.appendChild(groupBox);
   });
 
+  // 編集モード ON のときは変更イベントを有効化
+  if(isEditMode){
+    enableInlineEditing();
+  }
+
   renderSummary();
 }
 renderMenus();
 
 /* ==========================
-   合計の計算・表示
+   名前 & 金額のインライン編集
+========================== */
+function enableInlineEditing(){
+  // 商品名
+  document.querySelectorAll(".edit-name").forEach(input => {
+    input.addEventListener("input", e => {
+      const group = e.target.dataset.group;
+      const index = Number(e.target.dataset.index);
+      currentStore.menus[group][index].name = e.target.value;
+      renderSummary(); // 名前変更をメモ欄に反映
+    });
+  });
+
+  // 金額
+  document.querySelectorAll(".edit-price").forEach(input => {
+    input.addEventListener("input", e => {
+      const group = e.target.dataset.group;
+      const index = Number(e.target.dataset.index);
+      const v = Number(e.target.value);
+      if(!isNaN(v)){
+        currentStore.menus[group][index].price = v;
+        renderSummary(); // 金額変更をメモ欄に反映
+      }
+    });
+  });
+}
+
+/* ==========================
+   合計の計算
 ========================== */
 function renderSummary(){
   let total = 0;
@@ -604,10 +639,12 @@ function renderSummary(){
     `;
   });
 
-  summaryEl.innerHTML = html + `<div class="total">合計：¥${total.toLocaleString()}</div>`;
-  footerTotal.textContent = `合計：¥${total.toLocaleString()}`;
-}
+  summaryEl.innerHTML =
+    html + `<div class="total">合計：¥${total.toLocaleString()}</div>`;
 
+  footerTotal.textContent =
+    `合計：¥${total.toLocaleString()}`;
+}
 /* ==========================
    並び替え
 ========================== */
@@ -626,8 +663,10 @@ let deleteIndexNum = null;
 function openDeleteDialog(group, index){
   deleteGroupKey = group;
   deleteIndexNum = index;
+
   deleteTargetName.textContent =
     `「${currentStore.menus[group][index].name}」を削除しますか？`;
+
   deleteDialog.classList.remove("hidden");
 }
 window.openDeleteDialog = openDeleteDialog;
@@ -645,12 +684,13 @@ deleteConfirm.onclick = () => {
 };
 
 /* ==========================
-   編集モード（削除ボタンの表示制御）
+   編集モード ON / OFF
 ========================== */
 let isEditMode = false;
 
 editModeBtn.onclick = () => {
   isEditMode = !isEditMode;
+
   if(isEditMode){
     document.body.classList.add("edit-mode");
     editModeBtn.textContent = "編集モード：ON";
@@ -658,11 +698,23 @@ editModeBtn.onclick = () => {
     document.body.classList.remove("edit-mode");
     editModeBtn.textContent = "編集モード";
   }
+
+  // メニュー再描画（編集用UIを反映）
+  renderMenus();
 };
 
 /* ==========================
-   追加ダイアログ（使うなら）
+   新規メニュー追加（編集モードのみ）
 ========================== */
+function openAddDialog(){
+  if(!isEditMode){
+    alert("編集モードが ON のときだけ新規追加できます");
+    return;
+  }
+  addDialog.classList.remove("hidden");
+}
+window.openAddDialog = openAddDialog;
+
 addCancel.onclick = () => {
   addDialog.classList.add("hidden");
 };
@@ -674,9 +726,10 @@ addConfirm.onclick = () => {
   const group= addGroup.value;
 
   if(!name || !price){
-    alert("名前と価格は必須です");
+    alert("商品名と価格は必須です");
     return;
   }
+
   currentStore.menus[group].push({name, info, price});
 
   addName.value  = "";
@@ -684,26 +737,27 @@ addConfirm.onclick = () => {
   addInfo.value  = "";
 
   addDialog.classList.add("hidden");
+
   renderMenus();
 };
 
 /* ==========================
-   デバイス表示切替（ラベル用）
+   デバイス表示切替
 ========================== */
 let forcedMode = null; // "mobile" | "pc" | null(自動)
-
 function applyDeviceMode(){
   let isMobile;
-  if(forcedMode === "mobile")      isMobile = true;
-  else if(forcedMode === "pc")     isMobile = false;
-  else                             isMobile = window.innerWidth < 600;
 
-  deviceIndicator.textContent = isMobile ? "📱 スマホ表示" : "🖥 PC表示";
+  if(forcedMode === "mobile") isMobile = true;
+  else if(forcedMode === "pc") isMobile = false;
+  else isMobile = window.innerWidth < 600;
+
+  deviceIndicator.textContent =
+    isMobile ? "📱 スマホ表示" : "🖥 PC表示";
 
   if(isMobile) document.body.classList.add("mobile-mode");
   else         document.body.classList.remove("mobile-mode");
 }
-
 window.addEventListener("resize", applyDeviceMode);
 applyDeviceMode();
 
@@ -711,11 +765,12 @@ deviceToggleBtn.onclick = () => {
   if(forcedMode === "mobile")      forcedMode = "pc";
   else if(forcedMode === "pc")     forcedMode = null;
   else                             forcedMode = "mobile";
+
   applyDeviceMode();
 };
 
 /* ==========================
-   リセット（合計＆数量 全クリア）
+   リセット（合計 & 数量）
 ========================== */
 function resetAll(){
   Object.keys(qtyMap).forEach(k => qtyMap[k] = 0);
@@ -725,5 +780,16 @@ footerResetBtn.onclick = resetAll;
 
 </script>
 
+<!-- ==========================
+  固定フッター（合計）
+========================== -->
+<div class="total-bar">
+  <div class="total-bar-inner">
+    <div id="totalAmountFooter" class="total-text">合計：¥0</div>
+    <button id="footerResetBtn" class="reset-btn-footer">リセット</button>
+  </div>
+</div>
+
+</main>
 </body>
 </html>
