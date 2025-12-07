@@ -22,7 +22,7 @@
 
   body{
     padding:20px;
-    padding-bottom:260px;
+    padding-bottom:260px; /* フッターのための余白 */
     font-family:"Noto Sans JP", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
     background: linear-gradient(180deg, var(--navy), #071028);
     color:var(--muted);
@@ -40,6 +40,7 @@
 
   .container{max-width:1200px; margin:0 auto;}
 
+  /* --- ヘッダー --- */
   header{
     display:flex;
     align-items:center;
@@ -51,6 +52,7 @@
   h1{margin:0; color:var(--gold); font-size:20px;}
   .subtitle{font-size:13px; color:#d6c99a;}
 
+  /* ボタン類 */
   .btn{
     background:#2b2330;
     color:var(--muted);
@@ -65,6 +67,7 @@
 
   .top-controls{display:flex; gap:8px; align-items:center; flex-wrap:wrap;}
 
+  /* メニューエリア */
   .menu-area{
     display:grid;
     grid-template-columns:1fr 1fr;
@@ -104,7 +107,7 @@
     background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.2));
     border-radius:10px;
     padding:8px 10px;
-    margin-bottom:6px;
+    margin-bottom:6px; /* メニュー間の隙間を狭く */
     border:1px solid rgba(255,255,255,0.04);
     display:flex;
     flex-direction:column;
@@ -117,10 +120,25 @@
     align-items:center;
     gap:8px;
   }
-  .name{font-weight:700; font-size:15px; color:#fff;}
-  .price{min-width:80px; text-align:right; color:#efe9d6; font-weight:700; font-size:15px;}
 
-  .qty-label{font-size:12px; color:#d0c6b8;}
+  .name{
+    font-weight:700;
+    font-size:15px;
+    color:#fff;
+  }
+
+  .price{
+    min-width:80px;
+    text-align:right;
+    color:#efe9d6;
+    font-weight:700;
+    font-size:15px;
+  }
+
+  .qty-label{
+    font-size:12px;
+    color:#d0c6b8;
+  }
 
   .controls-row{
     display:flex;
@@ -152,7 +170,6 @@
   }
 
   .qty{
-    display:inline-block;
     min-width:52px;
     text-align:center;
     font-weight:800;
@@ -160,7 +177,7 @@
     color:#fff;
   }
 
-  /* 編集モードの削除ボタン */
+  /* 編集モードの時だけ削除ボタン表示 */
   .delete-btn{
     background:transparent;
     border:1px solid rgba(255,255,255,0.35);
@@ -173,7 +190,8 @@
   body:not(.edit-mode) .delete-btn{
     display:none !important;
   }
-  /* summary（メモ欄） */
+
+  /* summary（注文メモ） */
   .summary{
     margin-top:14px;
     background:rgba(255,255,255,0.03);
@@ -181,12 +199,14 @@
     padding:12px;
     border:1px solid rgba(255,255,255,0.04);
   }
+
   .order-line{
     display:flex;
     justify-content:space-between;
     margin-bottom:6px;
     font-size:14px;
   }
+
   .total{
     margin-top:6px;
     text-align:right;
@@ -195,7 +215,7 @@
     font-weight:800;
   }
 
-  /* フッター（追尾） */
+  /* 固定フッター */
   .total-bar{
     position:fixed;
     bottom:0;
@@ -205,6 +225,7 @@
     justify-content:center;
     z-index:9999;
   }
+
   .total-bar-inner{
     width:100%;
     max-width:1200px;
@@ -216,11 +237,13 @@
     border-top:2px solid rgba(255,255,255,0.35);
     box-shadow:0 -4px 18px rgba(0,0,0,0.7);
   }
+
   .total-text{
     font-size:22px;
     font-weight:900;
     color:#fff;
   }
+
   .reset-btn-footer{
     padding:10px 18px;
     border-radius:10px;
@@ -243,7 +266,7 @@
     z-index:9998;
   }
 
-  /* ダイアログ */
+  /* ダイアログ（追加・削除） */
   .dialog{
     position:fixed;
     inset:0;
@@ -253,9 +276,11 @@
     background:rgba(0,0,0,0.6);
     z-index:10000;
   }
+
   .dialog.hidden{
     display:none !important;
   }
+
   .dialog-content{
     background:linear-gradient(180deg,#0f1113,#141417);
     padding:16px;
@@ -264,6 +289,7 @@
     color:var(--muted);
     border:1px solid rgba(255,255,255,0.05);
   }
+
   .dialog-content input,
   .dialog-content select{
     width:100%;
@@ -276,39 +302,59 @@
   }
 
   /* ロゴ非表示 */
-  .top-logo{display:none !important;}
+  .top-logo{
+    display:none !important;
+  }
 
-  /* summary がフッターに重ならないよう調整 */
+  /* ===============================
+     フッターかぶり防止の余白調整
+  ================================= */
+
+  /* summary（選択された商品一覧）が
+     フッターに絶対に被らないよう強制的に余白を確保 */
   .summary{
     padding-bottom:220px !important;
   }
+
+  /* body の最下部にも余裕を持たせる */
   body{
     padding-bottom:300px !important;
   }
 
-  /* スマホ版フォント調整 */
+  /* スマホ時も同様に余白を確保 */
+  @media (max-width:600px){
+    .summary{
+      padding-bottom:240px !important;
+    }
+    body{
+      padding-bottom:300px !important;
+    }
+  }
+
+  /* ===============================
+     スマホ最適化（ボタン大 & 密度UP）
+  ================================= */
   @media (max-width:600px){
     body{
       padding:12px;
       padding-bottom:260px;
     }
+
     header{
       flex-direction:column;
       align-items:flex-start;
       gap:8px;
     }
-    .name{font-size:17px;}
-    .price{font-size:17px;}
-    .qty-label{font-size:14px;}
-    .qty{font-size:19px;}
+
+    .name { font-size:17px; }
+    .price{ font-size:17px; }
+    .qty-label{ font-size:14px; }
+    .qty{ font-size:19px; }
+
     .qty-btn{
       width:50px;
       height:50px;
       font-size:18px;
-    }
-
-    .summary{
-      padding-bottom:240px !important;
     }
   }
 </style>
@@ -318,6 +364,9 @@
 <main>
   <div class="container">
 
+    <!-- ==========================
+         ヘッダー
+    =========================== -->
     <header>
       <div class="title-wrap">
         <h1 id="pageTitle">🍸 GOG オーダー計算ツール</h1>
@@ -330,48 +379,424 @@
       </div>
     </header>
 
+    <!-- ==========================
+         メニュー表示エリア
+    =========================== -->
     <div id="menuArea" class="menu-area"></div>
 
+    <!-- ==========================
+         選択した商品の一覧（メモ欄）
+    =========================== -->
     <div id="summary" class="summary"></div>
 
-  </div><!-- container -->
+  </div><!-- /.container -->
 
+  <!-- ==========================
+       デバイスインジケーター
+  =========================== -->
   <div id="deviceIndicator" class="device-indicator"></div>
 
-  <!-- 追加ダイアログ -->
+
+
+  <!-- ==========================
+       追加ダイアログ
+  =========================== -->
   <div id="addDialog" class="dialog hidden">
     <div class="dialog-content">
       <h3>新規メニュー追加</h3>
+
       <select id="addGroup">
-        <option value="food">🍽 食べ物</option>
-        <option value="drink">🥂 飲み物</option>
+        <option value="food">食べ物</option>
+        <option value="drink">飲み物</option>
       </select>
-      <input id="addName"  placeholder="商品名">
+
+      <input id="addName" placeholder="商品名">
       <input id="addPrice" placeholder="価格" type="number">
-      <input id="addInfo"  placeholder="説明（例：腹50%）">
+      <input id="addInfo" placeholder="説明（例：腹50%）">
 
       <div style="display:flex; gap:10px; margin-top:8px;">
-        <button class="btn small" id="addCancel"  style="flex:1;">キャンセル</button>
+        <button class="btn small" id="addCancel" style="flex:1;">キャンセル</button>
         <button class="btn small" id="addConfirm" style="flex:1;">追加</button>
       </div>
     </div>
   </div>
 
-  <!-- 削除ダイアログ -->
+
+
+  <!-- ==========================
+       削除ダイアログ
+  =========================== -->
   <div id="deleteDialog" class="dialog hidden">
     <div class="dialog-content">
       <h3>削除確認</h3>
       <div id="deleteTargetName" style="margin-bottom:10px;"></div>
+
       <div style="display:flex; gap:10px;">
-        <button class="btn small" id="deleteCancel"  style="flex:1;">キャンセル</button>
-        <button class="btn small" id="deleteConfirm" style="flex:1; background:rgba(185,74,74,0.35);">
+        <button class="btn small" id="deleteCancel" style="flex:1;">キャンセル</button>
+
+        <button class="btn small"
+          id="deleteConfirm"
+          style="flex:1; background:rgba(185,74,74,0.35); color:#ffbdbd;">
           削除する
         </button>
       </div>
     </div>
   </div>
 
-  <!-- フッター（固定） -->
+  <!-- ==========================
+       JavaScript 本体
+  =========================== -->
+  <script>
+  /* ==========================
+     店舗データ
+  =========================== */
+  const stores = {
+    "Bar105": {
+      displayName: "Bar105",
+      menus: {
+        food: [
+          {name:"アヒージョ", info:"腹50%", price:10000},
+          {name:"りんごとシナモンのスティック", info:"腹40%", price:6000},
+          {name:"カプレーゼ", info:"腹35%", price:4500},
+          {name:"生ハム", info:"腹35%", price:4500},
+          {name:"ミックスナッツ", info:"腹20%", price:3000},
+        ],
+        drink: [
+          {name:"テキーラサンライズ", info:"水分50%", price:15000},
+          {name:"マティーニ", info:"水分50%", price:15000},
+          {name:"マンハッタン", info:"水分50%", price:15000},
+          {name:"モヒート", info:"水分40%", price:7000},
+          {name:"ウィスキー(ロック)", info:"水分40%", price:7000},
+          {name:"ジントニック", info:"水分35%", price:5500},
+          {name:"カルーアミルク", info:"水分35%", price:5500},
+          {name:"ファジーネーブル", info:"水分35%", price:5500},
+          {name:"クラフトビール", info:"水分20%", price:4000},
+          {name:"期間限定ドリンク", info:"", price:30000},
+        ]
+      }
+    },
+    "CLUB210": {
+      displayName: "CLUB210",
+      menus: {
+        food: [
+          {name:"ドライフルーツ", info:"腹50%", price:18000},
+          {name:"オリーブ", info:"腹40%", price:12600},
+          {name:"生チョコ", info:"腹35%", price:9000},
+        ],
+        drink: [
+          {name:"シャンパン", info:"水分50%", price:21000},
+          {name:"テキーラ", info:"水分40%", price:12600},
+          {name:"ビール", info:"水分35%", price:9000},
+        ]
+      }
+    },
+    "LOUNGE315": {
+      displayName: "LOUNGE315",
+      menus: {
+        food: [
+          {name:"パプリカのドリア", info:"腹50%", price:21000},
+          {name:"カナッペ（ピンチョス）", info:"腹35%", price:10500},
+        ],
+        drink: [
+          {name:"シャンパン", info:"水分50%", price:21000},
+          {name:"スパークリングワイン", info:"水分40%", price:14700},
+          {name:"ブランデー", info:"水分40%", price:14700},
+          {name:"ワイン", info:"水分35%", price:10500},
+        ]
+      }
+    }
+  };
+
+  /* ==========================
+     店舗キー判定 (?store=bar105 等)
+  =========================== */
+  function getStoreFromURL(){
+    const params = new URLSearchParams(location.search);
+    const raw = params.get("store");
+    if(!raw) return "Bar105";
+    const lower = raw.toLowerCase();
+    return Object.keys(stores).find(k => k.toLowerCase() === lower) || "Bar105";
+  }
+
+  const currentStoreKey = getStoreFromURL();
+  let currentStore = JSON.parse(JSON.stringify(stores[currentStoreKey]));
+
+  /* ==========================
+     DOM 取得
+  =========================== */
+  const pageTitle       = document.getElementById("pageTitle");
+  const menuArea        = document.getElementById("menuArea");
+  const summaryEl       = document.getElementById("summary");
+  const deviceIndicator = document.getElementById("deviceIndicator");
+
+  const editModeBtn     = document.getElementById("editModeBtn");
+  const deviceToggleBtn = document.getElementById("deviceToggleBtn");
+
+  const addDialog       = document.getElementById("addDialog");
+  const addName         = document.getElementById("addName");
+  const addPrice        = document.getElementById("addPrice");
+  const addInfo         = document.getElementById("addInfo");
+  const addGroup        = document.getElementById("addGroup");
+  const addCancel       = document.getElementById("addCancel");
+  const addConfirm      = document.getElementById("addConfirm");
+
+  const deleteDialog    = document.getElementById("deleteDialog");
+  const deleteTargetName= document.getElementById("deleteTargetName");
+  const deleteCancel    = document.getElementById("deleteCancel");
+  const deleteConfirm   = document.getElementById("deleteConfirm");
+
+  const footerTotal     = document.getElementById("totalAmountFooter");
+  const footerResetBtn  = document.getElementById("footerResetBtn");
+
+  /* ==========================
+     タイトル
+  =========================== */
+  pageTitle.textContent = `🍸 ${currentStore.displayName} — オーダー計算ツール`;
+
+  /* ==========================
+     数量管理
+  =========================== */
+  const qtyMap = {};
+
+  function addQty(id, diff){
+    qtyMap[id] = (qtyMap[id] || 0) + diff;
+    if(qtyMap[id] < 0) qtyMap[id] = 0;
+
+    const label = document.getElementById("qty_" + id);
+    if(label) label.textContent = qtyMap[id];
+
+    renderSummary();
+  }
+  window.addQty = addQty; // onclick から呼べるように
+
+  /* ==========================
+     メニュー描画
+  =========================== */
+  function renderMenus(){
+    menuArea.innerHTML = "";
+
+    ["food","drink"].forEach(group => {
+      const groupBox = document.createElement("div");
+      groupBox.className = "menu-group";
+
+      groupBox.innerHTML = `
+        <div class="menu-group-header">
+          <h2>${group === "food" ? "🍽 食べ物" : "🥂 飲み物"}</h2>
+          <button class="btn small" onclick="sortGroup('${group}')">価格で並び替え</button>
+        </div>
+      `;
+
+      currentStore.menus[group].forEach((item, index) => {
+        const itemId = `${group}_${index}`;
+        const itemEl = document.createElement("div");
+        itemEl.className = "menu-item";
+
+        itemEl.innerHTML = `
+          <div class="top-line">
+            <div class="name">${item.name}</div>
+            <div class="price">¥${item.price.toLocaleString()}</div>
+          </div>
+          <div class="qty-label">${item.info}</div>
+          <div class="controls-row">
+            <div class="btn-row">
+              <button class="qty-btn" onclick="addQty('${itemId}',1)">+1</button>
+              <button class="qty-btn" onclick="addQty('${itemId}',5)">+5</button>
+              <button class="qty-btn" onclick="addQty('${itemId}',10)">+10</button>
+              <button class="qty-btn" onclick="addQty('${itemId}',50)">+50</button>
+
+              <span id="qty_${itemId}" class="qty">0</span>
+
+              <button class="qty-btn" onclick="addQty('${itemId}',-1)">-1</button>
+              <button class="qty-btn" onclick="addQty('${itemId}',-5)">-5</button>
+              <button class="qty-btn" onclick="addQty('${itemId}',-10)">-10</button>
+              <button class="qty-btn" onclick="addQty('${itemId}',-50)">-50</button>
+            </div>
+
+            <button class="delete-btn" onclick="openDeleteDialog('${group}',${index})">削除</button>
+          </div>
+        `;
+
+        groupBox.appendChild(itemEl);
+      });
+
+      menuArea.appendChild(groupBox);
+    });
+
+    renderSummary();
+  }
+  renderMenus();
+
+  /* ==========================
+     合計の計算・表示
+  =========================== */
+  function renderSummary(){
+    let total = 0;
+    let html  = "";
+
+    Object.keys(qtyMap).forEach(id => {
+      const q = qtyMap[id];
+      if(q <= 0) return;
+
+      const [group, indexStr] = id.split("_");
+      const idx  = Number(indexStr);
+      const item = currentStore.menus[group][idx];
+      if(!item) return;
+
+      const sub = item.price * q;
+      total += sub;
+
+      html += `
+        <div class="order-line">
+          <span>${item.name} × ${q}</span>
+          <span>¥${sub.toLocaleString()}</span>
+        </div>
+      `;
+    });
+
+    summaryEl.innerHTML =
+      html + `<div class="total">合計：¥${total.toLocaleString()}</div>`;
+    footerTotal.textContent = `合計：¥${total.toLocaleString()}`;
+  }
+
+
+    /* ==========================
+     並び替え
+  =========================== */
+  function sortGroup(group){
+    currentStore.menus[group].sort((a,b) => a.price - b.price);
+    renderMenus();
+  }
+  window.sortGroup = sortGroup;
+
+  /* ==========================
+     削除ダイアログ
+  =========================== */
+  let deleteGroupKey = null;
+  let deleteIndexNum = null;
+
+  function openDeleteDialog(group, index){
+    deleteGroupKey = group;
+    deleteIndexNum = index;
+
+    deleteTargetName.textContent =
+      `「${currentStore.menus[group][index].name}」を削除しますか？`;
+
+    deleteDialog.classList.remove("hidden");
+  }
+  window.openDeleteDialog = openDeleteDialog;
+
+  deleteCancel.onclick = () => {
+    deleteDialog.classList.add("hidden");
+  };
+
+  deleteConfirm.onclick = () => {
+    if(deleteGroupKey && deleteIndexNum !== null){
+      currentStore.menus[deleteGroupKey].splice(deleteIndexNum,1);
+      deleteDialog.classList.add("hidden");
+      renderMenus();
+    }
+  };
+
+  /* ==========================
+     編集モード ON / OFF
+  =========================== */
+  let isEditMode = false;
+
+  editModeBtn.onclick = () => {
+    isEditMode = !isEditMode;
+
+    if(isEditMode){
+      document.body.classList.add("edit-mode");
+      editModeBtn.textContent = "編集モード：ON";
+    }else{
+      document.body.classList.remove("edit-mode");
+      editModeBtn.textContent = "編集モード";
+    }
+
+    renderMenus(); // 編集UI反映
+  };
+
+  /* ==========================
+     新規メニュー追加（編集モードのみ）
+  =========================== */
+  function openAddDialog(){
+    if(!isEditMode){
+      alert("編集モードが ON のときだけ新規追加できます");
+      return;
+    }
+    addDialog.classList.remove("hidden");
+  }
+  window.openAddDialog = openAddDialog;
+
+  addCancel.onclick = () => {
+    addDialog.classList.add("hidden");
+  };
+
+  addConfirm.onclick = () => {
+    const name = addName.value.trim();
+    const price= Number(addPrice.value);
+    const info = addInfo.value.trim();
+    const group= addGroup.value;
+
+    if(!name || !price){
+      alert("商品名と価格は必須です");
+      return;
+    }
+
+    currentStore.menus[group].push({name, info, price});
+
+    addName.value  = "";
+    addPrice.value = "";
+    addInfo.value  = "";
+
+    addDialog.classList.add("hidden");
+    renderMenus();
+  };
+
+  /* ==========================
+     デバイス表示切替（スマホ/PC）
+  =========================== */
+  let forcedMode = null; // "mobile" | "pc" | null(自動)
+
+  function applyDeviceMode(){
+    let isMobile;
+
+    if(forcedMode === "mobile") isMobile = true;
+    else if(forcedMode === "pc") isMobile = false;
+    else isMobile = window.innerWidth < 600;
+
+    deviceIndicator.textContent =
+      isMobile ? "📱 スマホ表示" : "🖥 PC表示";
+
+    if(isMobile) document.body.classList.add("mobile-mode");
+    else         document.body.classList.remove("mobile-mode");
+  }
+
+  window.addEventListener("resize", applyDeviceMode);
+  applyDeviceMode();
+
+  deviceToggleBtn.onclick = () => {
+    if(forcedMode === "mobile")      forcedMode = "pc";
+    else if(forcedMode === "pc")     forcedMode = null;
+    else                             forcedMode = "mobile";
+
+    applyDeviceMode();
+  };
+
+  /* ==========================
+     リセット（数量＋合計クリア）
+  =========================== */
+  function resetAll(){
+    Object.keys(qtyMap).forEach(k => qtyMap[k] = 0);
+    renderMenus();
+  }
+  footerResetBtn.onclick = resetAll;
+
+  </script>
+
+  <!-- ==========================
+       固定フッター（合計）
+  =========================== -->
   <div class="total-bar">
     <div class="total-bar-inner">
       <div id="totalAmountFooter" class="total-text">合計：¥0</div>
@@ -380,404 +805,5 @@
   </div>
 
 </main>
-<script>
-/* ==========================
-   店舗データ
-========================== */
-const stores = {
-  "Bar105": {
-    displayName: "Bar105",
-    menus: {
-      food: [
-        {name:"アヒージョ", info:"腹50%", price:10000},
-        {name:"りんごとシナモンのスティック", info:"腹40%", price:6000},
-        {name:"カプレーゼ", info:"腹35%", price:4500},
-        {name:"生ハム", info:"腹35%", price:4500},
-        {name:"ミックスナッツ", info:"腹20%", price:3000},
-      ],
-      drink: [
-        {name:"テキーラサンライズ", info:"水分50%", price:15000},
-        {name:"マティーニ", info:"水分50%", price:15000},
-        {name:"マンハッタン", info:"水分50%", price:15000},
-        {name:"モヒート", info:"水分40%", price:7000},
-        {name:"ウィスキー(ロック)", info:"水分40%", price:7000},
-        {name:"ジントニック", info:"水分35%", price:5500},
-        {name:"カルーアミルク", info:"水分35%", price:5500},
-        {name:"ファジーネーブル", info:"水分35%", price:5500},
-        {name:"クラフトビール", info:"水分20%", price:4000},
-        {name:"期間限定ドリンク", info:"", price:30000},
-      ]
-    }
-  },
-
-  "CLUB210": {
-    displayName: "CLUB210",
-    menus: {
-      food: [
-        {name:"ドライフルーツ", info:"腹50%", price:18000},
-        {name:"オリーブ", info:"腹40%", price:12600},
-        {name:"生チョコ", info:"腹35%", price:9000},
-      ],
-      drink: [
-        {name:"シャンパン", info:"水分50%", price:21000},
-        {name:"テキーラ", info:"水分40%", price:12600},
-        {name:"ビール", info:"水分35%", price:9000},
-      ]
-    }
-  },
-
-  "LOUNGE315": {
-    displayName: "LOUNGE315",
-    menus: {
-      food: [
-        {name:"パプリカのドリア", info:"腹50%", price:21000},
-        {name:"カナッペ（ピンチョス）", info:"腹35%", price:10500},
-      ],
-      drink: [
-        {name:"シャンパン", info:"水分50%", price:21000},
-        {name:"スパークリングワイン", info:"水分40%", price:14700},
-        {name:"ブランデー", info:"水分40%", price:14700},
-        {name:"ワイン", info:"水分35%", price:10500},
-      ]
-    }
-  }
-};
-
-/* ==========================
-   店舗キー判定 (?store=bar105)
-========================== */
-function getStoreFromURL(){
-  const raw = new URLSearchParams(location.search).get("store");
-  if(!raw) return "Bar105";
-
-  const key = Object.keys(stores).find(
-    k => k.toLowerCase() === raw.toLowerCase()
-  );
-  return key || "Bar105";
-}
-
-let currentStoreKey = getStoreFromURL();
-let currentStore = JSON.parse(JSON.stringify(stores[currentStoreKey]));
-
-/* ==========================
-   DOM 変数
-========================== */
-const pageTitle       = document.getElementById("pageTitle");
-const menuArea        = document.getElementById("menuArea");
-const summaryEl       = document.getElementById("summary");
-const deviceIndicator = document.getElementById("deviceIndicator");
-
-const editModeBtn     = document.getElementById("editModeBtn");
-const deviceToggleBtn = document.getElementById("deviceToggleBtn");
-
-const addDialog       = document.getElementById("addDialog");
-const addName         = document.getElementById("addName");
-const addPrice        = document.getElementById("addPrice");
-const addInfo         = document.getElementById("addInfo");
-const addGroup        = document.getElementById("addGroup");
-const addCancel       = document.getElementById("addCancel");
-const addConfirm      = document.getElementById("addConfirm");
-
-const deleteDialog    = document.getElementById("deleteDialog");
-const deleteTargetName= document.getElementById("deleteTargetName");
-const deleteCancel    = document.getElementById("deleteCancel");
-const deleteConfirm   = document.getElementById("deleteConfirm");
-
-const footerTotal     = document.getElementById("totalAmountFooter");
-const footerResetBtn  = document.getElementById("footerResetBtn");
-
-/* ==========================
-   タイトル反映
-========================== */
-pageTitle.textContent = `🍸 ${currentStore.displayName} — オーダー計算ツール`;
-
-/* ==========================
-   数量管理
-========================== */
-const qtyMap = {};
-
-function addQty(id, diff){
-  qtyMap[id] = (qtyMap[id] || 0) + diff;
-  if(qtyMap[id] < 0) qtyMap[id] = 0;
-
-  const label = document.getElementById("qty_" + id);
-  if(label) label.textContent = qtyMap[id];
-
-  renderSummary();
-}
-window.addQty = addQty; // グローバル公開（onclick用）
-/* ==========================
-   メニュー描画
-========================== */
-function renderMenus(){
-  menuArea.innerHTML = "";
-
-  ["food","drink"].forEach(group => {
-
-    const groupBox = document.createElement("div");
-    groupBox.className = "menu-group";
-
-    groupBox.innerHTML = `
-      <div class="menu-group-header">
-        <h2>${group === "food" ? "🍽 食べ物" : "🥂 飲み物"}</h2>
-        <button class="btn small" onclick="sortGroup('${group}')">価格で並び替え</button>
-      </div>
-    `;
-
-    currentStore.menus[group].forEach((item, index) => {
-
-      const itemId = `${group}_${index}`;
-      const itemEl = document.createElement("div");
-      itemEl.className = "menu-item";
-
-      /* 編集モードでは「名前」と「金額」を直接編集できるフィールドにする */
-      const nameField = isEditMode
-        ? `<input class="edit-name" data-group="${group}" data-index="${index}" value="${item.name}">`
-        : `<div class="name">${item.name}</div>`;
-
-      const priceField = isEditMode
-        ? `<input class="edit-price" type="number" data-group="${group}" data-index="${index}" value="${item.price}">`
-        : `<div class="price">¥${item.price.toLocaleString()}</div>`;
-
-      itemEl.innerHTML = `
-        <div class="top-line">
-          ${nameField}
-          ${priceField}
-        </div>
-
-        <div class="qty-label">${item.info}</div>
-
-        <div class="controls-row">
-          <div class="btn-row">
-
-            <button class="qty-btn" onclick="addQty('${itemId}',1)">+1</button>
-            <button class="qty-btn" onclick="addQty('${itemId}',5)">+5</button>
-            <button class="qty-btn" onclick="addQty('${itemId}',10)">+10</button>
-            <button class="qty-btn" onclick="addQty('${itemId}',50)">+50</button>
-
-            <span id="qty_${itemId}" class="qty">0</span>
-
-            <button class="qty-btn" onclick="addQty('${itemId}',-1)">-1</button>
-            <button class="qty-btn" onclick="addQty('${itemId}',-5)">-5</button>
-            <button class="qty-btn" onclick="addQty('${itemId}',-10)">-10</button>
-            <button class="qty-btn" onclick="addQty('${itemId}',-50)">-50</button>
-
-          </div>
-
-          <!-- 削除は編集モード時のみ表示 -->
-          <button class="delete-btn" onclick="openDeleteDialog('${group}',${index})">削除</button>
-        </div>
-      `;
-
-      groupBox.appendChild(itemEl);
-    });
-
-    menuArea.appendChild(groupBox);
-  });
-
-  // 編集モード ON のときは変更イベントを有効化
-  if(isEditMode){
-    enableInlineEditing();
-  }
-
-  renderSummary();
-}
-renderMenus();
-
-/* ==========================
-   名前 & 金額のインライン編集
-========================== */
-function enableInlineEditing(){
-  // 商品名
-  document.querySelectorAll(".edit-name").forEach(input => {
-    input.addEventListener("input", e => {
-      const group = e.target.dataset.group;
-      const index = Number(e.target.dataset.index);
-      currentStore.menus[group][index].name = e.target.value;
-      renderSummary(); // 名前変更をメモ欄に反映
-    });
-  });
-
-  // 金額
-  document.querySelectorAll(".edit-price").forEach(input => {
-    input.addEventListener("input", e => {
-      const group = e.target.dataset.group;
-      const index = Number(e.target.dataset.index);
-      const v = Number(e.target.value);
-      if(!isNaN(v)){
-        currentStore.menus[group][index].price = v;
-        renderSummary(); // 金額変更をメモ欄に反映
-      }
-    });
-  });
-}
-
-/* ==========================
-   合計の計算
-========================== */
-function renderSummary(){
-  let total = 0;
-  let html  = "";
-
-  Object.keys(qtyMap).forEach(id => {
-    const q = qtyMap[id];
-    if(q <= 0) return;
-
-    const [group, indexStr] = id.split("_");
-    const idx  = Number(indexStr);
-    const item = currentStore.menus[group][idx];
-    if(!item) return;
-
-    const sub = item.price * q;
-    total += sub;
-
-    html += `
-      <div class="order-line">
-        <span>${item.name} × ${q}</span>
-        <span>¥${sub.toLocaleString()}</span>
-      </div>
-    `;
-  });
-
-  summaryEl.innerHTML =
-    html + `<div class="total">合計：¥${total.toLocaleString()}</div>`;
-
-  footerTotal.textContent =
-    `合計：¥${total.toLocaleString()}`;
-}
-/* ==========================
-   並び替え
-========================== */
-function sortGroup(group){
-  currentStore.menus[group].sort((a,b) => a.price - b.price);
-  renderMenus();
-}
-window.sortGroup = sortGroup;
-
-/* ==========================
-   削除ダイアログ
-========================== */
-let deleteGroupKey = null;
-let deleteIndexNum = null;
-
-function openDeleteDialog(group, index){
-  deleteGroupKey = group;
-  deleteIndexNum = index;
-
-  deleteTargetName.textContent =
-    `「${currentStore.menus[group][index].name}」を削除しますか？`;
-
-  deleteDialog.classList.remove("hidden");
-}
-window.openDeleteDialog = openDeleteDialog;
-
-deleteCancel.onclick = () => {
-  deleteDialog.classList.add("hidden");
-};
-
-deleteConfirm.onclick = () => {
-  if(deleteGroupKey && deleteIndexNum !== null){
-    currentStore.menus[deleteGroupKey].splice(deleteIndexNum,1);
-    deleteDialog.classList.add("hidden");
-    renderMenus();
-  }
-};
-
-/* ==========================
-   編集モード ON / OFF
-========================== */
-let isEditMode = false;
-
-editModeBtn.onclick = () => {
-  isEditMode = !isEditMode;
-
-  if(isEditMode){
-    document.body.classList.add("edit-mode");
-    editModeBtn.textContent = "編集モード：ON";
-  }else{
-    document.body.classList.remove("edit-mode");
-    editModeBtn.textContent = "編集モード";
-  }
-
-  // メニュー再描画（編集用UIを反映）
-  renderMenus();
-};
-
-/* ==========================
-   新規メニュー追加（編集モードのみ）
-========================== */
-function openAddDialog(){
-  if(!isEditMode){
-    alert("編集モードが ON のときだけ新規追加できます");
-    return;
-  }
-  addDialog.classList.remove("hidden");
-}
-window.openAddDialog = openAddDialog;
-
-addCancel.onclick = () => {
-  addDialog.classList.add("hidden");
-};
-
-addConfirm.onclick = () => {
-  const name = addName.value.trim();
-  const price= Number(addPrice.value);
-  const info = addInfo.value.trim();
-  const group= addGroup.value;
-
-  if(!name || !price){
-    alert("商品名と価格は必須です");
-    return;
-  }
-
-  currentStore.menus[group].push({name, info, price});
-
-  addName.value  = "";
-  addPrice.value = "";
-  addInfo.value  = "";
-
-  addDialog.classList.add("hidden");
-
-  renderMenus();
-};
-
-/* ==========================
-   デバイス表示切替
-========================== */
-let forcedMode = null; // "mobile" | "pc" | null(自動)
-function applyDeviceMode(){
-  let isMobile;
-
-  if(forcedMode === "mobile") isMobile = true;
-  else if(forcedMode === "pc") isMobile = false;
-  else isMobile = window.innerWidth < 600;
-
-  deviceIndicator.textContent =
-    isMobile ? "📱 スマホ表示" : "🖥 PC表示";
-
-  if(isMobile) document.body.classList.add("mobile-mode");
-  else         document.body.classList.remove("mobile-mode");
-}
-window.addEventListener("resize", applyDeviceMode);
-applyDeviceMode();
-
-deviceToggleBtn.onclick = () => {
-  if(forcedMode === "mobile")      forcedMode = "pc";
-  else if(forcedMode === "pc")     forcedMode = null;
-  else                             forcedMode = "mobile";
-
-  applyDeviceMode();
-};
-
-/* ==========================
-   リセット（合計 & 数量）
-========================== */
-function resetAll(){
-  Object.keys(qtyMap).forEach(k => qtyMap[k] = 0);
-  renderMenus();
-}
-footerResetBtn.onclick = resetAll;
-
-</script>
 </body>
 </html>
