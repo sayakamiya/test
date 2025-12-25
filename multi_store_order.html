@@ -6,336 +6,328 @@
 <title>🍸 GOG — オーダー計算ツール（スマホ/PC対応）</title>
 
 <style>
-:root{
-  --gold:#c9a227;
-  --muted:#d9cfc6;
-  --navy:#0b1530;
-  --card-bg:#0f1726;
-  --btn-size-desktop:40px;
-  --btn-size-mobile:54px;
-  --radius:12px;
-  --danger:#b94a4a;
-}
-
-/* 全体レイアウト */
-*{box-sizing:border-box;}
-html,body{height:100%; margin:0;}
-
-body{
-  padding:20px;
-  padding-bottom:300px; /* フッターぶん余白を確保してかぶり防止 */
-  font-family:"Noto Sans JP", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-  background: linear-gradient(180deg, var(--navy), #071028);
-  color:var(--muted);
-  -webkit-font-smoothing:antialiased;
-  display:flex;
-  flex-direction:column;
-}
-
-main{
-  flex:1;
-  display:flex;
-  flex-direction:column;
-  width:100%;
-}
-
-.container{max-width:1200px; margin:0 auto;}
-
-/* ヘッダー */
-header{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-  margin-bottom:14px;
-}
-.title-wrap{display:flex; flex-direction:column;}
-h1{margin:0; color:var(--gold); font-size:20px;}
-.subtitle{font-size:13px; color:#d6c99a;}
-
-/* ボタン類 */
-.btn{
-  background:#2b2330;
-  color:var(--muted);
-  border:1px solid rgba(255,255,255,0.08);
-  border-radius:10px;
-  padding:8px 10px;
-  cursor:pointer;
-  font-size:14px;
-}
-.btn:hover{filter:brightness(1.05); color:var(--gold);}
-.small{font-size:13px; padding:6px 9px;}
-
-.top-controls{display:flex; gap:8px; align-items:center; flex-wrap:wrap;}
-
-/* 編集モード時だけ表示されるボタン */
-#addMenuBtn{
-  display:inline-block;
-}
-body:not(.edit-mode) #addMenuBtn{
-  display:none !important;
-}
-
-/* メニューエリア */
-.menu-area{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:12px;
-}
-@media (max-width:900px){
-  .menu-area{grid-template-columns:1fr;}
-}
-
-.menu-group{
-  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.12));
-  padding:10px;
-  border-radius:var(--radius);
-  box-shadow:0 8px 24px rgba(0,0,0,0.4);
-  border:1px solid rgba(255,255,255,0.05);
-  margin-bottom:10px;
-}
-
-.menu-group-header{
-  background: rgba(201,162,39,0.12);
-  padding:8px 12px;
-  border-radius:10px;
-  border:1px solid rgba(201,162,39,0.25);
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:8px;
-}
-.menu-group-header h2{
-  margin:0;
-  font-size:18px;
-  font-weight:900;
-  color:var(--gold);
-}
-
-.menu-item{
-  background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.2));
-  border-radius:10px;
-  padding:8px 10px;
-  margin-bottom:6px; /* ← メニュー間の隙間を狭める */
-  border:1px solid rgba(255,255,255,0.04);
-  display:flex;
-  flex-direction:column;
-  gap:4px;
-}
-
-.top-line{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:8px;
-}
-.name{font-weight:700; font-size:15px; color:#fff;}
-.price{min-width:80px; text-align:right; color:#efe9d6; font-weight:700; font-size:15px;}
-
-.qty-label{font-size:12px; color:#d0c6b8;}
-
-.controls-row{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:8px;
-  flex-wrap:wrap;
-}
-
-.btn-row{
-  display:flex;
-  align-items:center;
-  gap:6px;
-  flex-wrap:wrap;
-}
-
-.qty-btn{
-  width:var(--btn-size-desktop);
-  height:var(--btn-size-desktop);
-  display:grid;
-  place-items:center;
-  border-radius:8px;
-  background:linear-gradient(180deg,#241b16,#3a2b24);
-  color:var(--muted);
-  border:1px solid rgba(255,255,255,0.08);
-  cursor:pointer;
-  font-weight:800;
-  touch-action:manipulation; /* ← スマホのズーム防止 */
-}
-
-.qty{
-  display:inline-block;
-  min-width:52px;
-  text-align:center;
-  font-weight:800;
-  font-size:16px;
-  color:#fff;
-}
-
-/* 編集用ボタン（編集モードのみ表示） */
-.edit-controls{
-  display:flex;
-  flex-direction:column;
-  gap:4px;
-}
-.edit-btn{
-  background:rgba(255,255,255,0.08);
-  color:var(--muted);
-  border:1px solid rgba(255,255,255,0.3);
-  border-radius:8px;
-  padding:4px 8px;
-  font-size:12px;
-  cursor:pointer;
-}
-.edit-btn:hover{
-  filter:brightness(1.08);
-}
-
-/* 削除ボタン：編集モードONの時だけ表示 */
-.delete-btn{
-  background:transparent;
-  border:1px solid rgba(255,255,255,0.35);
-  color:var(--muted);
-  padding:6px 8px;
-  border-radius:8px;
-  cursor:pointer;
-  font-size:12px;
-}
-body:not(.edit-mode) .delete-btn,
-body:not(.edit-mode) .edit-btn{
-  display:none !important;
-}
-
-/* 集計エリア（メモ欄） */
-.summary{
-  margin-top:14px;
-  background:rgba(255,255,255,0.03);
-  border-radius:12px;
-  padding:12px;
-  border:1px solid rgba(255,255,255,0.04);
-  padding-bottom:240px; /* フッターに被らないよう余白 */
-}
-.order-line{
-  display:flex;
-  justify-content:space-between;
-  margin-bottom:6px;
-  font-size:14px;
-}
-.total{
-  margin-top:6px;
-  text-align:right;
-  font-size:18px;
-  color:#fff;
-  font-weight:800;
-}
-
-/* 固定フッター（合計＋リセット） */
-.total-bar{
-  position:fixed;
-  bottom:0;
-  left:0;
-  width:100%;
-  display:flex;
-  justify-content:center;
-  z-index:9999;
-}
-.total-bar-inner{
-  width:100%;
-  max-width:1200px;
-  background:linear-gradient(180deg,#c9a227,#9f821d);
-  padding:12px 18px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  border-top:2px solid rgba(255,255,255,0.35);
-  box-shadow:0 -4px 18px rgba(0,0,0,0.7);
-}
-.total-text{
-  font-size:22px;
-  font-weight:900;
-  color:#fff;
-}
-.reset-btn-footer{
-  padding:10px 18px;
-  border-radius:10px;
-  border:1px solid rgba(255,255,255,0.6);
-  color:#fff;
-  background:rgba(0,0,0,0.25);
-  cursor:pointer;
-}
-
-/* デバイスインジケーター（フッターにかぶらない位置） */
-.device-indicator{
-  position:fixed;
-  bottom:90px;
-  right:12px;
-  background:rgba(0,0,0,0.45);
-  padding:6px 10px;
-  border-radius:8px;
-  font-size:12px;
-  color:var(--muted);
-  z-index:9998;
-}
-
-/* ダイアログ */
-.dialog{
-  position:fixed;
-  inset:0;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background:rgba(0,0,0,0.6);
-  z-index:10000;
-}
-.dialog.hidden{
-  display:none !important;
-}
-.dialog-content{
-  background:linear-gradient(180deg,#0f1113,#141417);
-  padding:16px;
-  border-radius:12px;
-  width:320px;
-  color:var(--muted);
-  border:1px solid rgba(255,255,255,0.05);
-}
-.dialog-content input,
-.dialog-content select{
-  width:100%;
-  padding:8px;
-  margin-bottom:8px;
-  border-radius:8px;
-  border:1px solid rgba(255,255,255,0.15);
-  background:transparent;
-  color:var(--muted);
-}
-.dialog-buttons{
-  display:flex;
-  gap:10px;
-  margin-top:8px;
-}
-
-/* スマホ用調整（フォント＆ボタン少し大きめ＋密度UP） */
-@media (max-width:600px){
-  body{
-    padding:12px;
-    padding-bottom:300px;
+  :root{
+    --gold:#c9a227;
+    --muted:#d9cfc6;
+    --navy:#0b1530;
+    --card-bg:#0f1726;
+    --btn-size-desktop:40px;
+    --btn-size-mobile:54px;
+    --radius:12px;
+    --danger:#b94a4a;
   }
-  header{
+
+  *{box-sizing:border-box;}
+  html,body{height:100%; margin:0;}
+
+  body{
+    padding:20px;
+    padding-bottom:260px; /* フッターぶん余白を確保してかぶり防止 */
+    font-family:"Noto Sans JP", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    background: linear-gradient(180deg, var(--navy), #071028);
+    color:var(--muted);
+    -webkit-font-smoothing:antialiased;
+    display:flex;
     flex-direction:column;
-    align-items:flex-start;
+  }
+
+  main{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    width:100%;
+  }
+
+  .container{max-width:1200px; margin:0 auto;}
+
+  /* ヘッダー */
+  header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    margin-bottom:14px;
+  }
+  .title-wrap{display:flex; flex-direction:column;}
+  h1{margin:0; color:var(--gold); font-size:20px;}
+  .subtitle{font-size:13px; color:#d6c99a;}
+
+  /* ボタン類 */
+  .btn{
+    background:#2b2330;
+    color:var(--muted);
+    border:1px solid rgba(255,255,255,0.08);
+    border-radius:10px;
+    padding:8px 10px;
+    cursor:pointer;
+    font-size:14px;
+  }
+  .btn:hover{filter:brightness(1.05); color:var(--gold);}
+  .small{font-size:13px; padding:6px 9px;}
+
+  .top-controls{display:flex; gap:8px; align-items:center; flex-wrap:wrap;}
+
+  /* メニューエリア */
+  .menu-area{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+  }
+  @media (max-width:900px){
+    .menu-area{grid-template-columns:1fr;}
+  }
+
+  .menu-group{
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.12));
+    padding:10px;
+    border-radius:var(--radius);
+    box-shadow:0 8px 24px rgba(0,0,0,0.4);
+    border:1px solid rgba(255,255,255,0.05);
+    margin-bottom:10px;
+  }
+
+  .menu-group-header{
+    background: rgba(201,162,39,0.12);
+    padding:8px 12px;
+    border-radius:10px;
+    border:1px solid rgba(201,162,39,0.25);
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:8px;
+  }
+  .menu-group-header h2{
+    margin:0;
+    font-size:18px;
+    font-weight:900;
+    color:var(--gold);
+  }
+
+  .menu-item{
+    background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.2));
+    border-radius:10px;
+    padding:8px 10px;
+    margin-bottom:6px; /* ← メニュー間の隙間を狭める */
+    border:1px solid rgba(255,255,255,0.04);
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+  }
+
+  .top-line{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
     gap:8px;
   }
-  .name,
-  .price{font-size:17px;}
-  .qty-label{font-size:14px;}
-  .qty{font-size:19px;}
+  .name{font-weight:700; font-size:15px; color:#fff;}
+  .price{min-width:80px; text-align:right; color:#efe9d6; font-weight:700; font-size:15px;}
+
+  .qty-label{font-size:12px; color:#d0c6b8;}
+
+  .controls-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:8px;
+    flex-wrap:wrap;
+  }
+
+  .btn-row{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    flex-wrap:wrap;
+  }
 
   .qty-btn{
-    width:50px;
-    height:50px;
+    width:var(--btn-size-desktop);
+    height:var(--btn-size-desktop);
+    display:grid;
+    place-items:center;
+    border-radius:8px;
+    background:linear-gradient(180deg,#241b16,#3a2b24);
+    color:var(--muted);
+    border:1px solid rgba(255,255,255,0.08);
+    cursor:pointer;
+    font-weight:800;
+    touch-action:manipulation;
+  }
+
+  .qty{
+    display:inline-block;
+    min-width:52px;
+    text-align:center;
+    font-weight:800;
+    font-size:16px;
+    color:#fff;
+  }
+
+  /* 削除ボタン：編集モードONの時だけ表示 */
+  .delete-btn{
+    background:transparent;
+    border:1px solid rgba(255,255,255,0.35);
+    color:var(--muted);
+    padding:6px 8px;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:12px;
+  }
+  body:not(.edit-mode) .delete-btn{
+    display:none !important;
+  }
+
+  /* 集計エリア（メモ欄） */
+  .summary{
+    margin-top:14px;
+    background:rgba(255,255,255,0.03);
+    border-radius:12px;
+    padding:12px;
+    border:1px solid rgba(255,255,255,0.04);
+  }
+  .order-line{
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:6px;
+    font-size:14px;
+  }
+  .total{
+    margin-top:6px;
+    text-align:right;
     font-size:18px;
+    color:#fff;
+    font-weight:800;
+  }
+
+  /* 固定フッター（合計＋リセット） */
+  .total-bar{
+    position:fixed;
+    bottom:0;
+    left:0;
+    width:100%;
+    display:flex;
+    justify-content:center;
+    z-index:9999;
+  }
+  .total-bar-inner{
+    width:100%;
+    max-width:1200px;
+    background:linear-gradient(180deg,#c9a227,#9f821d);
+    padding:12px 18px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    border-top:2px solid rgba(255,255,255,0.35);
+    box-shadow:0 -4px 18px rgba(0,0,0,0.7);
+  }
+  .total-text{
+    font-size:22px;
+    font-weight:900;
+    color:#fff;
+  }
+  .reset-btn-footer{
+    padding:10px 18px;
+    border-radius:10px;
+    border:1px solid rgba(255,255,255,0.6);
+    color:#fff;
+    background:rgba(0,0,0,0.25);
+    cursor:pointer;
+  }
+
+  /* デバイスインジケーター（フッターにかぶらない位置） */
+  .device-indicator{
+    position:fixed;
+    bottom:90px;
+    right:12px;
+    background:rgba(0,0,0,0.45);
+    padding:6px 10px;
+    border-radius:8px;
+    font-size:12px;
+    color:var(--muted);
+    z-index:9998;
+  }
+
+  /* ダイアログ */
+  .dialog{
+    position:fixed;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:rgba(0,0,0,0.6);
+    z-index:10000;
+  }
+  .dialog.hidden{
+    display:none !important;
+  }
+  .dialog-content{
+    background:linear-gradient(180deg,#0f1113,#141417);
+    padding:16px;
+    border-radius:12px;
+    width:320px;
+    color:var(--muted);
+    border:1px solid rgba(255,255,255,0.05);
+  }
+  .dialog-content input,
+  .dialog-content select{
+    width:100%;
+    padding:8px;
+    margin-bottom:8px;
+    border-radius:8px;
+    border:1px solid rgba(255,255,255,0.15);
+    background:transparent;
+    color:var(--muted);
+  }
+
+  /* ロゴは非表示（でっかいロゴを出さない） */
+  .top-logo{display:none !important;}
+
+  /* ============================
+   フッター重なりを防ぐ余白調整
+============================ */
+
+/* summary（選択済み商品一覧）がフッターに被らないように余白確保 */
+.summary {
+  padding-bottom: 220px !important;
+}
+
+/* body 全体の下部余白もさらに余裕を持たせる */
+body {
+  padding-bottom: 300px !important;
+}
+
+/* スマホ時も同様に余白を確保 */
+@media (max-width:600px) {
+  .summary {
+    padding-bottom: 240px !important;
+  }
+  body {
+    padding-bottom: 300px !important;
   }
 }
+  
+  /* スマホ用調整（フォント＆ボタン少し大きめ＋密度UP） */
+  @media (max-width:600px){
+    body{
+      padding:12px;
+      padding-bottom:260px;
+    }
+    header{
+      flex-direction:column;
+      align-items:flex-start;
+      gap:8px;
+    }
+    .name{font-size:17px;}
+    .price{font-size:17px;}
+    .qty-label{font-size:14px;}
+    .qty{font-size:19px;}
+
+    .qty-btn{
+      width:50px;
+      height:50px;
+      font-size:18px;
+    }
+  }
 </style>
 </head>
 
@@ -351,34 +343,32 @@ body:not(.edit-mode) .edit-btn{
 
       <div class="top-controls">
         <button class="btn small" id="editModeBtn">編集モード</button>
-        <button class="btn small" id="addMenuBtn">新規メニュー追加</button>
         <button class="btn small" id="deviceToggleBtn">PC/スマホ切替</button>
       </div>
     </header>
 
     <div id="menuArea" class="menu-area"></div>
+
     <div id="summary" class="summary"></div>
 
   </div><!-- /.container -->
 
-  <!-- デバイスインジケーター -->
   <div id="deviceIndicator" class="device-indicator"></div>
 
-  <!-- 追加 / 編集 ダイアログ -->
-  <div id="menuDialog" class="dialog hidden">
+  <!-- 追加ダイアログ（今はボタンは無いが、将来用に残しておく） -->
+  <div id="addDialog" class="dialog hidden">
     <div class="dialog-content">
-      <h3 id="dialogTitle">メニュー追加 / 編集</h3>
-      <select id="dialogGroup">
+      <h3>メニュー追加</h3>
+      <input id="addName"  placeholder="商品名">
+      <input id="addPrice" placeholder="価格" type="number">
+      <input id="addInfo"  placeholder="説明（例：腹50%）">
+      <select id="addGroup">
         <option value="food">食べ物</option>
         <option value="drink">飲み物</option>
       </select>
-      <input id="dialogName"  placeholder="商品名">
-      <input id="dialogPrice" placeholder="価格" type="number">
-      <input id="dialogInfo"  placeholder="説明（例：腹50%）">
-
-      <div class="dialog-buttons">
-        <button class="btn small" id="dialogCancel"  style="flex:1;">キャンセル</button>
-        <button class="btn small" id="dialogConfirm" style="flex:1;">保存</button>
+      <div style="display:flex; gap:10px; margin-top:8px;">
+        <button class="btn small" id="addCancel"  style="flex:1;">キャンセル</button>
+        <button class="btn small" id="addConfirm" style="flex:1;">追加</button>
       </div>
     </div>
   </div>
@@ -388,7 +378,7 @@ body:not(.edit-mode) .edit-btn{
     <div class="dialog-content">
       <h3>削除確認</h3>
       <div id="deleteTargetName" style="margin-bottom:10px;"></div>
-      <div class="dialog-buttons">
+      <div style="display:flex; gap:10px;">
         <button class="btn small" id="deleteCancel"  style="flex:1;">キャンセル</button>
         <button class="btn small" id="deleteConfirm" style="flex:1; background:rgba(185,74,74,0.35);">
           削除する
@@ -420,8 +410,11 @@ const stores = {
         {name:"りんごとシナモンのスティック", info:"腹40%", price:6000},
         {name:"カプレーゼ", info:"腹35%", price:4500},
         {name:"生ハム", info:"腹35%", price:4500},
+        {name:"【初心者案内限定】35%回復フード", info:"腹35%", price:3000},
         {name:"ミックスナッツ", info:"腹20%", price:3000},
-        {name:"コラボ商品", info:"腹50%", price:18000},
+        {name:"【コラボ】ブランデーケーキ", info:"腹50%", price:18000},
+        {name:"【Admin限定】プリンアリスモード", info:"腹35%", price:8000},
+
       ],
       drink: [
         {name:"テキーラサンライズ", info:"水分50%", price:15000},
@@ -432,8 +425,9 @@ const stores = {
         {name:"ジントニック", info:"水分35%", price:5500},
         {name:"カルーアミルク", info:"水分35%", price:5500},
         {name:"ファジーネーブル", info:"水分35%", price:5500},
+        {name:"【初心者案内限定】35%回復ドリンク", info:"水分35%", price:3000},
         {name:"クラフトビール", info:"水分20%", price:4000},
-        {name:"期間限定ドリンク", info:"", price:30000},
+        {name:"【Admin限定】ミネスアローネ", info:"水分35%", price:8000},
       ]
     }
   },
@@ -441,14 +435,16 @@ const stores = {
     displayName: "CLUB210",
     menus: {
       food: [
-        {name:"ドライフルーツ", info:"腹50%", price:18000},
-        {name:"オリーブ", info:"腹40%", price:12600},
-        {name:"生チョコ", info:"腹35%", price:9000},
+        {name:"ドライフルーツ", info:"腹50%", price:10000},
+        {name:"オリーブ", info:"腹40%", price:8000},
+        {name:"生チョコ", info:"腹35%", price:4500},
+        {name:"【Admin限定】シラミートパイ", info:"腹35%", price:8000},
       ],
       drink: [
         {name:"シャンパン", info:"水分50%", price:21000},
-        {name:"テキーラ", info:"水分40%", price:12600},
-        {name:"ビール", info:"水分35%", price:9000},
+        {name:"テキーラ", info:"水分40%", price:10000},
+        {name:"ビール", info:"水分35%", price:8000},
+        {name:"【Admin限定】ドロビーフシチュー", info:"水分35%", price:8000},
       ]
     }
   },
@@ -458,13 +454,15 @@ const stores = {
       food: [
         {name:"パプリカのドリア", info:"腹50%", price:21000},
         {name:"カナッペ（ピンチョス）", info:"腹35%", price:10500},
-        {name:"コラボ商品", info:"腹50%", price:18000},
+        {name:"【コラボ】キセルチョコ", info:"腹50%", price:18000},
+        {name:"【Admin限定】サパリエ", info:"腹35%", price:8000},
       ],
       drink: [
         {name:"シャンパン", info:"水分50%", price:21000},
         {name:"スパークリングワイン", info:"水分40%", price:14700},
         {name:"ブランデー", info:"水分40%", price:14700},
         {name:"ワイン", info:"水分35%", price:10500},
+        {name:"【Admin限定】シャクパン", info:"水分35%", price:8000},
       ]
     }
   }
@@ -493,17 +491,15 @@ const summaryEl       = document.getElementById("summary");
 const deviceIndicator = document.getElementById("deviceIndicator");
 
 const editModeBtn     = document.getElementById("editModeBtn");
-const addMenuBtn      = document.getElementById("addMenuBtn");
 const deviceToggleBtn = document.getElementById("deviceToggleBtn");
 
-const menuDialog      = document.getElementById("menuDialog");
-const dialogTitle     = document.getElementById("dialogTitle");
-const dialogGroup     = document.getElementById("dialogGroup");
-const dialogName      = document.getElementById("dialogName");
-const dialogPrice     = document.getElementById("dialogPrice");
-const dialogInfo      = document.getElementById("dialogInfo");
-const dialogCancel    = document.getElementById("dialogCancel");
-const dialogConfirm   = document.getElementById("dialogConfirm");
+const addDialog       = document.getElementById("addDialog");
+const addName         = document.getElementById("addName");
+const addPrice        = document.getElementById("addPrice");
+const addInfo         = document.getElementById("addInfo");
+const addGroup        = document.getElementById("addGroup");
+const addCancel       = document.getElementById("addCancel");
+const addConfirm      = document.getElementById("addConfirm");
 
 const deleteDialog    = document.getElementById("deleteDialog");
 const deleteTargetName= document.getElementById("deleteTargetName");
@@ -522,12 +518,6 @@ pageTitle.textContent = `🍸 ${currentStore.displayName} — オーダー計算
    数量管理
 ========================== */
 const qtyMap = {};
-
-function clearQuantities(){
-  for(const k in qtyMap){
-    delete qtyMap[k];
-  }
-}
 
 function addQty(id, diff){
   qtyMap[id] = (qtyMap[id] || 0) + diff;
@@ -583,10 +573,7 @@ function renderMenus(){
             <button class="qty-btn" onclick="addQty('${itemId}',-50)">-50</button>
           </div>
 
-          <div class="edit-controls">
-            <button class="edit-btn" onclick="openEditDialog('${group}',${index})">編集</button>
-            <button class="delete-btn" onclick="openDeleteDialog('${group}',${index})">削除</button>
-          </div>
+          <button class="delete-btn" onclick="openDeleteDialog('${group}',${index})">削除</button>
         </div>
       `;
 
@@ -613,7 +600,7 @@ function renderSummary(){
 
     const [group, indexStr] = id.split("_");
     const idx  = Number(indexStr);
-    const item = currentStore.menus[group] && currentStore.menus[group][idx];
+    const item = currentStore.menus[group][idx];
     if(!item) return;
 
     const sub = item.price * q;
@@ -636,7 +623,6 @@ function renderSummary(){
 ========================== */
 function sortGroup(group){
   currentStore.menus[group].sort((a,b) => a.price - b.price);
-  clearQuantities();
   renderMenus();
 }
 window.sortGroup = sortGroup;
@@ -664,103 +650,50 @@ deleteConfirm.onclick = () => {
   if(deleteGroupKey && deleteIndexNum !== null){
     currentStore.menus[deleteGroupKey].splice(deleteIndexNum,1);
     deleteDialog.classList.add("hidden");
-    clearQuantities();
     renderMenus();
   }
 };
 
 /* ==========================
-   編集モード ON / OFF
+   編集モード（削除ボタンの表示制御）
 ========================== */
 let isEditMode = false;
 
 editModeBtn.onclick = () => {
   isEditMode = !isEditMode;
-
   if(isEditMode){
     document.body.classList.add("edit-mode");
     editModeBtn.textContent = "編集モード：ON";
   }else{
     document.body.classList.remove("edit-mode");
     editModeBtn.textContent = "編集モード";
-    menuDialog.classList.add("hidden");
   }
 };
 
 /* ==========================
-   新規メニュー追加 / 既存メニュー編集
+   追加ダイアログ（使うなら）
 ========================== */
-let editTarget = null; // null = 新規, {group,index} = 編集
-
-function openAddDialogNew(){
-  if(!isEditMode){
-    alert("編集モードが ON のときだけ新規追加できます");
-    return;
-  }
-  editTarget = null;
-  dialogTitle.textContent = "メニュー追加";
-  dialogGroup.value = "food";
-  dialogName.value  = "";
-  dialogPrice.value = "";
-  dialogInfo.value  = "";
-  menuDialog.classList.remove("hidden");
-}
-
-function openEditDialog(group, index){
-  if(!isEditMode){
-    alert("編集モードが ON のときだけ編集できます");
-    return;
-  }
-  editTarget = {group, index};
-  const item = currentStore.menus[group][index];
-  dialogTitle.textContent = "メニュー編集";
-  dialogGroup.value = group;
-  dialogName.value  = item.name;
-  dialogPrice.value = item.price;
-  dialogInfo.value  = item.info || "";
-  menuDialog.classList.remove("hidden");
-}
-window.openEditDialog = openEditDialog;
-
-addMenuBtn.onclick = openAddDialogNew;
-
-dialogCancel.onclick = () => {
-  menuDialog.classList.add("hidden");
+addCancel.onclick = () => {
+  addDialog.classList.add("hidden");
 };
 
-dialogConfirm.onclick = () => {
-  const group = dialogGroup.value;
-  const name  = dialogName.value.trim();
-  const price = Number(dialogPrice.value);
-  const info  = dialogInfo.value.trim();
+addConfirm.onclick = () => {
+  const name = addName.value.trim();
+  const price= Number(addPrice.value);
+  const info = addInfo.value.trim();
+  const group= addGroup.value;
 
   if(!name || !price){
-    alert("商品名と価格は必須です");
+    alert("名前と価格は必須です");
     return;
   }
+  currentStore.menus[group].push({name, info, price});
 
-  if(editTarget){
-    // 既存編集
-    const oldGroup = editTarget.group;
-    const oldIndex = editTarget.index;
-    const item = currentStore.menus[oldGroup][oldIndex];
-    item.name = name;
-    item.price = price;
-    item.info = info;
+  addName.value  = "";
+  addPrice.value = "";
+  addInfo.value  = "";
 
-    if(oldGroup !== group){
-      // グループが変わった場合は移動
-      currentStore.menus[oldGroup].splice(oldIndex,1);
-      currentStore.menus[group].push(item);
-    }
-  }else{
-    // 新規追加
-    currentStore.menus[group].push({name, price, info});
-  }
-
-  editTarget = null;
-  menuDialog.classList.add("hidden");
-  clearQuantities();
+  addDialog.classList.add("hidden");
   renderMenus();
 };
 
@@ -792,13 +725,14 @@ deviceToggleBtn.onclick = () => {
 };
 
 /* ==========================
-   リセット（合計 & 数量）
+   リセット（合計＆数量 全クリア）
 ========================== */
 function resetAll(){
-  clearQuantities();
+  Object.keys(qtyMap).forEach(k => qtyMap[k] = 0);
   renderMenus();
 }
 footerResetBtn.onclick = resetAll;
+
 </script>
 
 </body>
